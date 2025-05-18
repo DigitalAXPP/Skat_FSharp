@@ -18,7 +18,21 @@ type GameSetup =
 type Action =
     | Bid
     | Reject
-    | Accept
+type reizen = {
+    FirstPlayer: PlayerId
+    SecondPlayer: PlayerId
+    ThirdPlayer: PlayerId
+}
+type reizAction = {
+    Player: PlayerId
+    Activity: Action
+    Amount: int option
+}
+type  reizList = {
+    FirstPlayer: reizAction
+    SecondPlayer: reizAction
+    ThirdPlayer: reizAction
+}
 
 let allRanks = [Seven ; Eight ; Nine ; Dame ; King ; Ten ; Ace ; Bube]
 let allSuites = [Spades ; Clubs ; Hearts ; Diamonds]
@@ -51,11 +65,10 @@ let nextTurn (state: GameState) : PlayerId * GameState =
         current, { state with TurnQueue = newQueue; TurnCount = state.TurnCount + 1 }
 
 let getActionFromConsole (playerId: PlayerId) : Action =
-    printfn "Player %d, enter your action (Bid, Reject, Accept):" playerId
+    printfn "Player %d, enter your action (Bid, Reject):" playerId
     match System.Console.ReadLine().Trim().ToLower().Split() with
     | [| "bid" |] -> Bid
     | [| "reject" |] -> Reject
-    | [| "accept" |] -> Accept
     | _ ->
         printfn "Invalid input, defaulting to wait."
         Reject
@@ -64,13 +77,42 @@ let takeAction (player: PlayerId) (action: Action) (game: GameState) : PlayerId 
     match action with
     | Bid -> 
         printf "Player %i bids." player
+
         nextTurn game
     | Reject ->
         printf "Player %i rejects." player
         nextTurn game
-    | Accept -> 
-        printf "Player %i accepts." player
-        nextTurn game
+
+//let resolveBids (bid1: reizAction) (bid2: reizAction) (bid3: reizAction) : reizen =
+//    if bid1.Activity = Bid > bid2.Amount then
+//        Winner (bid1.Player, bid1.Amount)
+//    elif bid2.Amount > bid1.Amount then
+//        Winner (bid2.Player, bid2.Amount)
+//    else
+//        Tie bid1.Amount
+
+let getBidFromConsole playerId =
+    printf "Player %d, enter your bid: " playerId
+    let input = System.Console.ReadLine()
+    match System.Int32.TryParse input with
+    | true, amount -> { Player = playerId; Amount = amount }
+    | _ -> 
+        printfn "Invalid input. Defaulting to 0."
+        { Player = playerId; Amount = 0 }
+
+let rec biddingLoop rounds (score: Map<PlayerId, int>) =
+    if rounds = 0 then
+        printfn "Final scores:"
+        score |> Map.iter (fun pid s -> printfn "Player %d: %d" pid s)
+    else
+        let b1 = getBidFromConsole 1
+        let b2 = getBidFromConsole 2
+        let result = resolveBids b1 b2
+        let updatedScore =
+            match result with
+            | Winner (pid, _) -> score |> Map.change pid (fun opt -> Some ((Option.defaultValue 0 opt) + 1))
+            | Tie _ -> score
+        biddingLoop (rounds - 1) updatedScore
 
 let rec gameloop (player: PlayerId) (game: GameState) =
     match game.TurnQueue with
