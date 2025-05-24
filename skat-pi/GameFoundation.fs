@@ -119,10 +119,13 @@ let updatePlayerAmount player amount =
 //    else
 //        Tie bid1.Amount
 
-let getPlayerAction (player: ReizAction) (action: bool) =
-    match action with
-    | true -> updatePlayerActivity player Bid
-    | false -> updatePlayerActivity player Reject
+let rec getPlayerAction (player: ReizAction) =
+    printf "Player %i, do you want to bid (Yes/No):" player.Player
+    let console = System.Console.ReadLine()
+    match console with
+    | "Yes" -> updatePlayerActivity player Bid
+    | "No" -> updatePlayerActivity player Reject
+    | _ -> getPlayerAction player
 
 let rec bidding (player: ReizAction) (bid: int) =
     printf "Player %i bid:" player.Player
@@ -133,90 +136,28 @@ let rec bidding (player: ReizAction) (bid: int) =
 
 let rec getBiddingPlayer (playerOne: ReizAction) (playerTwo: ReizAction) (startBid: int) =
     match bidding playerOne startBid with
-    | None -> $"Player {playerTwo.Player} wins"
+    | None -> playerTwo
     | Some v -> 
+        let firstPlayerUpdated = { playerOne with Amount = Some v }
         match bidding playerTwo v with
-        | None -> 
-            $"Player {playerOne.Player} wins"
-        | Some i -> getBiddingPlayer playerOne playerTwo i
+        | None -> firstPlayerUpdated
+        | Some i -> 
+            let secondPlayerUpdated = { playerTwo with Amount = Some i }
+            getBiddingPlayer firstPlayerUpdated secondPlayerUpdated i
 
 let startBidding () =
-    printf "Player 1, do you want to bid:"
-    let erster = System.Console.ReadLine()
-    printf "Player 2, do you want to bid:"
-    let zwei = System.Console.ReadLine()
-    if erster = "Y" && zwei = "Y" then
+    let firstPlayer = getPlayerAction firstPlayer
+    let secondPlayer = getPlayerAction secondPlayer
+    if firstPlayer.Activity = Bid && secondPlayer.Activity = Bid then
         getBiddingPlayer firstPlayer secondPlayer 18
     else
-        printf "Player 3, do you want to bid:"
-        let drei = System.Console.ReadLine()
-        if erster = "Y" && drei = "Y" then
+        let thirdPlayer = getPlayerAction thirdPlayer
+        if firstPlayer.Activity = Bid && thirdPlayer.Activity = Bid then
             getBiddingPlayer firstPlayer thirdPlayer 18
-        elif zwei = "Y" && drei = "Y" then
+        elif secondPlayer.Activity = Bid && thirdPlayer.Activity = Bid then
             getBiddingPlayer secondPlayer thirdPlayer 18
         else
-            "No player wants to bid"
-
-let resolveReizen (playerOne: ReizAction) (playerTwo: ReizAction) playerThree =
-    if playerOne.Activity = Undecided then
-        printf "Player %d, do you want to bid?" playerOne.Player
-        let fst, input = bool.TryParse(System.Console.ReadLine())
-        let first = getPlayerAction playerOne input
-
-    else if playerTwo.Activity = Undecided then
-        printf "Player %d, do you want to bid?" playerTwo.Player
-        let fst, input = bool.TryParse(System.Console.ReadLine())
-        let second = getPlayerAction playerTwo input
-
-let resolveBids (reizen: Reizen) : Reizen =
-    if reizen.FirstPlayer.Activity = Undecided then
-        printf "Player %d, do you want to bid?" reizen.FirstPlayer.Player
-        let input = System.Console.ReadLine()
-        match input with
-        | "Yes" -> updatedFirstPlayerActivity Bid
-        | "No" -> updatedFirstPlayerActivity Reject
-    else
-        reizen
-    //else if reizen.[0].Activity = Bid then
-    //    printf "Player %d, enter your bid: " reizen.[0].Player
-    //    let input = System.Console.ReadLine()
-    //    match System.Int32.TryParse input with
-    //    | true, amount -> { Player = playerId; Amount = Some amount; Activity = Bid}
-    //    | _ -> 
-    //        printfn "Invalid input. Defaulting to 0."
-    //        { Player = playerId; Amount = None; Activity = Bid }
-        
-            
-
-let getBidFromConsole playerId =
-    printf "Player %d, enter your bid: " playerId
-    let input = System.Console.ReadLine()
-    match System.Int32.TryParse input with
-    | true, amount -> { Player = playerId; Amount = Some amount; Activity = Bid}
-    | _ -> 
-        printfn "Invalid input. Defaulting to 0."
-        { Player = playerId; Amount = None; Activity = Bid }
-
-//let rec biddingLoop rounds (score: Map<PlayerId, int>) =
-//    let b1 = getBidFromConsole 1
-//    let b2 = getBidFromConsole 2
-//    let result = resolveBids b1 b2
-//    let updatedScore =
-//        match result with
-//        | Winner (pid, _) -> score |> Map.change pid (fun opt -> Some ((Option.defaultValue 0 opt) + 1))
-//        | Tie _ -> score
-//    biddingLoop (rounds - 1) updatedScore
-
-let rec biddingLoop (reizen: Reizen) =
-    let player1 = getBidFromConsole 1
-    let player2 = getBidFromConsole 2
-    let player3 = getBidFromConsole 3
-    let result = resolveBids b1 b2
-    let updatedScore =
-        match result with
-        | Winner (pid, _) -> score |> Map.change pid (fun opt -> Some ((Option.defaultValue 0 opt) + 1))
-        | Tie _ -> score
-    biddingLoop (rounds - 1) updatedScore
+            failwith "There is no bidder."
 
 let rec gameloop (player: PlayerId) (game: GameState) =
     match game.TurnQueue with
