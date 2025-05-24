@@ -7,8 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="SkatRules.fs" />
     <Compile Include="GameFoundation.fs" />
+    <Compile Include="SkatRules.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 

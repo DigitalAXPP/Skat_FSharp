@@ -18,20 +18,36 @@ type GameSetup =
 type Action =
     | Bid
     | Reject
-type reizen = {
-    FirstPlayer: PlayerId
-    SecondPlayer: PlayerId
-    ThirdPlayer: PlayerId
-}
-type reizAction = {
+    | Undecided
+type ReizAction = {
     Player: PlayerId
     Activity: Action
     Amount: int option
 }
-type  reizList = {
-    FirstPlayer: reizAction
-    SecondPlayer: reizAction
-    ThirdPlayer: reizAction
+type Reizen = {
+    FirstPlayer: ReizAction
+    SecondPlayer: ReizAction
+    ThirdPlayer: ReizAction
+}
+//let reizList = {
+//    FirstPlayer = { Player = 1; Activity = Undecided; Amount = None}
+//    SecondPlayer = { Player = 2; Activity = Undecided; Amount = None}
+//    ThirdPlayer = { Player = 3; Activity = Undecided; Amount = None}
+//}
+let firstPlayer = {
+    Player = 1
+    Activity = Undecided
+    Amount = None
+}
+let secondPlayer = {
+    Player = 2
+    Activity = Undecided
+    Amount = None
+}
+let thirdPlayer = {
+    Player = 3
+    Activity = Undecided
+    Amount = None
 }
 
 let allRanks = [Seven ; Eight ; Nine ; Dame ; King ; Ten ; Ace ; Bube]
@@ -83,6 +99,18 @@ let takeAction (player: PlayerId) (action: Action) (game: GameState) : PlayerId 
         printf "Player %i rejects." player
         nextTurn game
 
+let updatePlayerActivity player decision =
+    { player with Activity = decision }
+
+let updatePlayerAmount player amount =
+    match player.Activity with
+    | Bid -> { player with Amount = Some amount }
+    | Reject -> player
+    | Undecided -> player
+    //| first :: rest ->
+    //    let updatedFirst = { first with Activity = decision }
+    //    updatedFirst :: rest
+    //| _ -> reizList
 //let resolveBids (bid1: reizAction) (bid2: reizAction) (bid3: reizAction) : reizen =
 //    if bid1.Activity = Bid > bid2.Amount then
 //        Winner (bid1.Player, bid1.Amount)
@@ -91,28 +119,105 @@ let takeAction (player: PlayerId) (action: Action) (game: GameState) : PlayerId 
 //    else
 //        Tie bid1.Amount
 
+let getPlayerAction (player: ReizAction) (action: bool) =
+    match action with
+    | true -> updatePlayerActivity player Bid
+    | false -> updatePlayerActivity player Reject
+
+let rec bidding (player: int) (bid: int) =
+    printf "Player %i bid:" player
+    match System.Int32.TryParse(System.Console.ReadLine()) with
+    | false, _ -> None
+    | true, input when input > bid -> Some input
+    | true, _ -> bidding player bid
+
+let rec getBiddingPlayer (playerOne: int) (playerTwo: int) (startBid: int) =
+    match bidding playerOne startBid with
+    | None -> $"Player {playerTwo} wins"
+    | Some v -> 
+        match bidding playerTwo v with
+        | None -> 
+            $"Player {playerOne} wins"
+        | Some i -> getBiddingPlayer playerOne playerTwo i
+
+let startBidding () =
+    printf "Player 1, do you want to bid:"
+    let erster = System.Console.ReadLine()
+    printf "Player 2, do you want to bid:"
+    let zwei = System.Console.ReadLine()
+    if erster = "Y" && zwei = "Y" then
+        getBiddingPlayer 1 2 18
+    else
+        printf "Player 3, do you want to bid:"
+        let drei = System.Console.ReadLine()
+        if erster = "Y" && drei = "Y" then
+            getBiddingPlayer 1 3 18
+        elif zwei = "Y" && drei = "Y" then
+            getBiddingPlayer 2 3 18
+        else
+            "No player wants to bid"
+        
+
+let resolveReizen (playerOne: ReizAction) (playerTwo: ReizAction) playerThree =
+    if playerOne.Activity = Undecided then
+        printf "Player %d, do you want to bid?" playerOne.Player
+        let fst, input = bool.TryParse(System.Console.ReadLine())
+        let first = getPlayerAction playerOne input
+
+    else if playerTwo.Activity = Undecided then
+        printf "Player %d, do you want to bid?" playerTwo.Player
+        let fst, input = bool.TryParse(System.Console.ReadLine())
+        let second = getPlayerAction playerTwo input
+
+let resolveBids (reizen: Reizen) : Reizen =
+    if reizen.FirstPlayer.Activity = Undecided then
+        printf "Player %d, do you want to bid?" reizen.FirstPlayer.Player
+        let input = System.Console.ReadLine()
+        match input with
+        | "Yes" -> updatedFirstPlayerActivity Bid
+        | "No" -> updatedFirstPlayerActivity Reject
+    else
+        reizen
+    //else if reizen.[0].Activity = Bid then
+    //    printf "Player %d, enter your bid: " reizen.[0].Player
+    //    let input = System.Console.ReadLine()
+    //    match System.Int32.TryParse input with
+    //    | true, amount -> { Player = playerId; Amount = Some amount; Activity = Bid}
+    //    | _ -> 
+    //        printfn "Invalid input. Defaulting to 0."
+    //        { Player = playerId; Amount = None; Activity = Bid }
+        
+            
+
 let getBidFromConsole playerId =
     printf "Player %d, enter your bid: " playerId
     let input = System.Console.ReadLine()
     match System.Int32.TryParse input with
-    | true, amount -> { Player = playerId; Amount = amount }
+    | true, amount -> { Player = playerId; Amount = Some amount; Activity = Bid}
     | _ -> 
         printfn "Invalid input. Defaulting to 0."
-        { Player = playerId; Amount = 0 }
+        { Player = playerId; Amount = None; Activity = Bid }
 
-let rec biddingLoop rounds (score: Map<PlayerId, int>) =
-    if rounds = 0 then
-        printfn "Final scores:"
-        score |> Map.iter (fun pid s -> printfn "Player %d: %d" pid s)
-    else
-        let b1 = getBidFromConsole 1
-        let b2 = getBidFromConsole 2
-        let result = resolveBids b1 b2
-        let updatedScore =
-            match result with
-            | Winner (pid, _) -> score |> Map.change pid (fun opt -> Some ((Option.defaultValue 0 opt) + 1))
-            | Tie _ -> score
-        biddingLoop (rounds - 1) updatedScore
+//let rec biddingLoop rounds (score: Map<PlayerId, int>) =
+//    let b1 = getBidFromConsole 1
+//    let b2 = getBidFromConsole 2
+//    let result = resolveBids b1 b2
+//    let updatedScore =
+//        match result with
+//        | Winner (pid, _) -> score |> Map.change pid (fun opt -> Some ((Option.defaultValue 0 opt) + 1))
+//        | Tie _ -> score
+//    biddingLoop (rounds - 1) updatedScore
+
+let rec biddingLoop (reizen: Reizen) =
+    let player1 = getBidFromConsole 1
+    let player2 = getBidFromConsole 2
+    let player3 = getBidFromConsole 3
+    let result = resolveBids b1 b2
+    let updatedScore =
+        match result with
+        | Winner (pid, _) -> score |> Map.change pid (fun opt -> Some ((Option.defaultValue 0 opt) + 1))
+        | Tie _ -> score
+    biddingLoop (rounds - 1) updatedScore
 
 let rec gameloop (player: PlayerId) (game: GameState) =
     match game.TurnQueue with
