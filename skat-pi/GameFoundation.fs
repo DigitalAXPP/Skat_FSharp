@@ -29,11 +29,6 @@ type Reizen = {
     SecondPlayer: ReizAction
     ThirdPlayer: ReizAction
 }
-//let reizList = {
-//    FirstPlayer = { Player = 1; Activity = Undecided; Amount = None}
-//    SecondPlayer = { Player = 2; Activity = Undecided; Amount = None}
-//    ThirdPlayer = { Player = 3; Activity = Undecided; Amount = None}
-//}
 let firstPlayer = {
     Player = 1
     Activity = Undecided
@@ -107,17 +102,6 @@ let updatePlayerAmount player amount =
     | Bid -> { player with Amount = Some amount }
     | Reject -> player
     | Undecided -> player
-    //| first :: rest ->
-    //    let updatedFirst = { first with Activity = decision }
-    //    updatedFirst :: rest
-    //| _ -> reizList
-//let resolveBids (bid1: reizAction) (bid2: reizAction) (bid3: reizAction) : reizen =
-//    if bid1.Activity = Bid > bid2.Amount then
-//        Winner (bid1.Player, bid1.Amount)
-//    elif bid2.Amount > bid1.Amount then
-//        Winner (bid2.Player, bid2.Amount)
-//    else
-//        Tie bid1.Amount
 
 let rec getPlayerAction (player: ReizAction) =
     printf "Player %i, do you want to bid (Yes/No):" player.Player
@@ -160,6 +144,8 @@ let startBidding () =
             failwith "There is no bidder."
 
 let rec gameloop (player: PlayerId) (game: GameState) =
+    let bidder = startBidding()
+    printf "%i %A %i" bidder.Player bidder.Activity bidder.Amount.Value
     match game.TurnQueue with
     | [] ->
         printfn "All players have quit. Game over."
