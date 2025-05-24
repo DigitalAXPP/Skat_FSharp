@@ -124,20 +124,20 @@ let getPlayerAction (player: ReizAction) (action: bool) =
     | true -> updatePlayerActivity player Bid
     | false -> updatePlayerActivity player Reject
 
-let rec bidding (player: int) (bid: int) =
-    printf "Player %i bid:" player
+let rec bidding (player: ReizAction) (bid: int) =
+    printf "Player %i bid:" player.Player
     match System.Int32.TryParse(System.Console.ReadLine()) with
     | false, _ -> None
     | true, input when input > bid -> Some input
     | true, _ -> bidding player bid
 
-let rec getBiddingPlayer (playerOne: int) (playerTwo: int) (startBid: int) =
+let rec getBiddingPlayer (playerOne: ReizAction) (playerTwo: ReizAction) (startBid: int) =
     match bidding playerOne startBid with
-    | None -> $"Player {playerTwo} wins"
+    | None -> $"Player {playerTwo.Player} wins"
     | Some v -> 
         match bidding playerTwo v with
         | None -> 
-            $"Player {playerOne} wins"
+            $"Player {playerOne.Player} wins"
         | Some i -> getBiddingPlayer playerOne playerTwo i
 
 let startBidding () =
@@ -146,17 +146,16 @@ let startBidding () =
     printf "Player 2, do you want to bid:"
     let zwei = System.Console.ReadLine()
     if erster = "Y" && zwei = "Y" then
-        getBiddingPlayer 1 2 18
+        getBiddingPlayer firstPlayer secondPlayer 18
     else
         printf "Player 3, do you want to bid:"
         let drei = System.Console.ReadLine()
         if erster = "Y" && drei = "Y" then
-            getBiddingPlayer 1 3 18
+            getBiddingPlayer firstPlayer thirdPlayer 18
         elif zwei = "Y" && drei = "Y" then
-            getBiddingPlayer 2 3 18
+            getBiddingPlayer secondPlayer thirdPlayer 18
         else
             "No player wants to bid"
-        
 
 let resolveReizen (playerOne: ReizAction) (playerTwo: ReizAction) playerThree =
     if playerOne.Activity = Undecided then
