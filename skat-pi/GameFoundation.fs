@@ -8,6 +8,10 @@ type GameState = {
     TurnQueue: PlayerId list
     TurnCount: int
 }
+type GameStyle =
+    | ColourGame
+    | Grand
+    | NullGame
 type GameSetup =
     {
         FirstPlayer: Card list
@@ -102,6 +106,17 @@ let updatePlayerAmount player amount =
     | Bid -> { player with Amount = Some amount }
     | Reject -> player
     | Undecided -> player
+
+let rec setGameStyle (player: ReizAction) : GameStyle =
+    printf "Player %i, which game style do you want to play (Colour/Grand/Null)?" player.Player
+    let console = System.Console.ReadLine()
+    match console with
+    | "Colour" -> ColourGame
+    | "Grand" -> Grand
+    | "Null" -> NullGame
+    | _ -> 
+        printf "Player %i, wrong selection, try again." player.Player
+        setGameStyle player
 
 let rec getPlayerAction (player: ReizAction) =
     printf "Player %i, do you want to bid (Yes/No):" player.Player
