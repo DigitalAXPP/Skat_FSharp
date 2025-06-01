@@ -7,7 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="PlayerLogic.fs" />
     <Compile Include="GameFoundation.fs" />
+    <Compile Include="Reizen.fs" />
+    <Compile Include="GamePlay.fs" />
     <Compile Include="SkatRules.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
