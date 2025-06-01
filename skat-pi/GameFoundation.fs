@@ -1,8 +1,8 @@
 ﻿module GameFoundation
 
-type Suite = Spades | Clubs | Hearts | Diamonds
-type Rank = Seven | Eight | Nine | Dame | King | Ten | Ace | Bube
-type Card = { Rank: Rank ; Suite: Suite }
+
+
+
 type PlayerId = int
 type GameState = {
     TurnQueue: PlayerId list
@@ -49,18 +49,12 @@ let thirdPlayer = {
     Amount = None
 }
 
-let allRanks = [Seven ; Eight ; Nine ; Dame ; King ; Ten ; Ace ; Bube]
-let allSuites = [Spades ; Clubs ; Hearts ; Diamonds]
+
 let gamestate = true
 let initialState = { TurnQueue = [1; 2; 3]; TurnCount = 0 }
-let Deck =
-    [ for suite in allSuites do
-        for rank in allRanks do
-            yield { Rank = rank ; Suite = suite } ]
 
-let shuffleDeck deck =
-    let rnd = System.Random()
-    deck |> List.sortBy (fun _ -> rnd.Next())
+
+
 
 let pickCard deck =
     deck |> List.head
