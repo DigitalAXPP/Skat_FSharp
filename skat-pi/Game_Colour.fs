@@ -25,6 +25,12 @@ type GameSetup =
         Skat: Card list
     }
 
+type GameType =
+    | SuitGame of Suite  // One suit is trump
+    | Grand              // Only Jacks are trump
+    | Null               // No trumps at all
+
+
 let allRanks = [Seven ; Eight ; Nine ; Dame ; King ; Ten ; Ace ; Bube]
 let allSuites = [Spades ; Clubs ; Hearts ; Diamonds]
 
@@ -46,3 +52,16 @@ let dealInitialHand deck =
 
 let compareCards (firstPlayerCard: Card) (secondPlayerCard: Card) (thirdPlayerCard: Card) : Card =
     List.max [firstPlayerCard; secondPlayerCard; thirdPlayerCard]
+
+let getTrumpSuites (gameType: GameType) : Suite list =
+    match gameType with
+    | SuitGame trumpSuite ->
+        // In Suit game, all Jacks + the selected trump suite are trumps
+        [Diamonds; Hearts; Clubs; Spades] // All Jacks are implied to be trump
+        |> List.filter (fun s -> s = trumpSuite)  // Return all suites for now
+    | Grand ->
+        // Only Jacks are trumps; return their "suites"
+        []  // Since Jacks are not Suite cards, you might model them differently
+    | Null ->
+        // No trumps at all
+        []
