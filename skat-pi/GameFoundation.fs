@@ -1,7 +1,20 @@
 ﻿module GameFoundation
 
-
-
+type Suite = 
+    | Diamonds
+    | Hearts
+    | Clubs
+    | Spades
+type Rank =
+    | Seven
+    | Eight
+    | Nine
+    | Dame
+    | King
+    | Ten
+    | Ace
+    | Jack
+type Card = { Suite: Suite; Rank: Rank }
 
 type PlayerId = int
 type GameState = {
@@ -49,15 +62,15 @@ let thirdPlayer = {
     Amount = None
 }
 
-
 let gamestate = true
 let initialState = { TurnQueue = [1; 2; 3]; TurnCount = 0 }
 
-
-
-
 let pickCard deck =
     deck |> List.head
+
+let shuffleDeck (deck: Card list) =
+    let rnd = System.Random()
+    deck |> List.sortBy (fun _ -> rnd.Next())
 
 let dealInitialHand deck =
     let shuffled = shuffleDeck deck
