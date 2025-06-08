@@ -15,7 +15,7 @@ type Rank =
     | King
     | Ten
     | Ace
-    | Bube
+    | Jack
 type Card = { Suite: Suite; Rank: Rank }
 type GameSetup =
     {
@@ -31,7 +31,7 @@ type GameType =
     | Null               // No trumps at all
 
 
-let allRanks = [Seven ; Eight ; Nine ; Dame ; King ; Ten ; Ace ; Bube]
+let allRanks = [Seven ; Eight ; Nine ; Dame ; King ; Ten ; Ace ; Jack]
 let allSuites = [Spades ; Clubs ; Hearts ; Diamonds]
 
 let Deck =
@@ -65,3 +65,19 @@ let getTrumpSuites (gameType: GameType) : Suite list =
     | Null ->
         // No trumps at all
         []
+
+let isTrumpSuite (card: Card) (trump: Suite) =
+    card.Suite = trump
+
+let normalRankOrder = [Seven; Eight; Nine; Dame; King; Ten; Ace]
+
+let cardStrength (game: GameType) (card: Card) : int =
+    let jackSuitOrder = [Clubs; Spades; Hearts; Diamonds]
+
+    match game with
+    | Grand | SuitGame _ when card.Rank = Jack ->
+        100 + List.findIndex ((=) card.Suite) jackSuitOrder
+    | SuitGame trump when card.Suite = trump ->
+        50 + List.findIndex ((=) card.Rank) normalRankOrder
+    | _ ->
+        List.findIndex ((=) card.Rank) normalRankOrder
