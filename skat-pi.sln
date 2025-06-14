@@ -5,6 +5,8 @@ VisualStudioVersion = 17.10.35122.118
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "skat-pi", "skat-pi\skat-pi.fsproj", "{4A4D6464-36BB-4BF1-B3A0-AC3849364C98}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "skat-pi.Tests", "skat-pi.Tests\skat-pi.Tests.fsproj", "{8FD23E4E-41EA-4048-A583-606F260906FB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{4A4D6464-36BB-4BF1-B3A0-AC3849364C98}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4A4D6464-36BB-4BF1-B3A0-AC3849364C98}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4A4D6464-36BB-4BF1-B3A0-AC3849364C98}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8FD23E4E-41EA-4048-A583-606F260906FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8FD23E4E-41EA-4048-A583-606F260906FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8FD23E4E-41EA-4048-A583-606F260906FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8FD23E4E-41EA-4048-A583-606F260906FB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

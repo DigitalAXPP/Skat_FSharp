@@ -1,13 +1,30 @@
 ﻿module GameFoundation
 
-type Suite = Spades | Clubs | Hearts | Diamonds
-type Rank = Seven | Eight | Nine | Dame | King | Ten | Ace | Bube
-type Card = { Rank: Rank ; Suite: Suite }
+type Suite = 
+    | Diamonds
+    | Hearts
+    | Clubs
+    | Spades
+type Rank =
+    | Seven
+    | Eight
+    | Nine
+    | Dame
+    | King
+    | Ten
+    | Ace
+    | Jack
+type Card = { Suite: Suite; Rank: Rank }
+
 type PlayerId = int
 type GameState = {
     TurnQueue: PlayerId list
     TurnCount: int
 }
+type GameStyle =
+    | ColourGame
+    | Grand
+    | NullGame
 type GameSetup =
     {
         FirstPlayer: Card list
@@ -18,23 +35,42 @@ type GameSetup =
 type Action =
     | Bid
     | Reject
-    | Accept
+    | Undecided
+type ReizAction = {
+    Player: PlayerId
+    Activity: Action
+    Amount: int option
+}
+type Reizen = {
+    FirstPlayer: ReizAction
+    SecondPlayer: ReizAction
+    ThirdPlayer: ReizAction
+}
+let firstPlayer = {
+    Player = 1
+    Activity = Undecided
+    Amount = None
+}
+let secondPlayer = {
+    Player = 2
+    Activity = Undecided
+    Amount = None
+}
+let thirdPlayer = {
+    Player = 3
+    Activity = Undecided
+    Amount = None
+}
 
-let allRanks = [Seven ; Eight ; Nine ; Dame ; King ; Ten ; Ace ; Bube]
-let allSuites = [Spades ; Clubs ; Hearts ; Diamonds]
 let gamestate = true
 let initialState = { TurnQueue = [1; 2; 3]; TurnCount = 0 }
-let Deck =
-    [ for suite in allSuites do
-        for rank in allRanks do
-            yield { Rank = rank ; Suite = suite } ]
-
-let shuffleDeck deck =
-    let rnd = System.Random()
-    deck |> List.sortBy (fun _ -> rnd.Next())
 
 let pickCard deck =
     deck |> List.head
+
+let shuffleDeck (deck: Card list) =
+    let rnd = System.Random()
+    deck |> List.sortBy (fun _ -> rnd.Next())
 
 let dealInitialHand deck =
     let shuffled = shuffleDeck deck
@@ -50,29 +86,27 @@ let nextTurn (state: GameState) : PlayerId * GameState =
         let newQueue = rest @ [current]
         current, { state with TurnQueue = newQueue; TurnCount = state.TurnCount + 1 }
 
-let getActionFromConsole (playerId: PlayerId) : Action =
-    printfn "Player %d, enter your action (Bid, Reject, Accept):" playerId
-    match System.Console.ReadLine().Trim().ToLower().Split() with
-    | [| "bid" |] -> Bid
-    | [| "reject" |] -> Reject
-    | [| "accept" |] -> Accept
-    | _ ->
-        printfn "Invalid input, defaulting to wait."
-        Reject
-
 let takeAction (player: PlayerId) (action: Action) (game: GameState) : PlayerId * GameState =
     match action with
     | Bid -> 
         printf "Player %i bids." player
+
         nextTurn game
     | Reject ->
         printf "Player %i rejects." player
         nextTurn game
-    | Accept -> 
-        printf "Player %i accepts." player
-        nextTurn game
+
+let getActionFromConsole (playerId: PlayerId) : Action =
+    printfn "Player %d, enter your action (Bid, Reject):" playerId
+    match System.Console.ReadLine().Trim().ToLower().Split() with
+    | [| "bid" |] -> Bid
+    | [| "reject" |] -> Reject
+    | _ ->
+        printfn "Invalid input, defaulting to wait."
+        Reject
 
 let rec gameloop (player: PlayerId) (game: GameState) =
+    //printf "%i %A %i" bidder.Player bidder.Activity bidder.Amount.Value
     match game.TurnQueue with
     | [] ->
         printfn "All players have quit. Game over."
@@ -81,3 +115,6 @@ let rec gameloop (player: PlayerId) (game: GameState) =
         let action = getActionFromConsole currentPlayer
         let playerid, gamestate = takeAction currentPlayer action game
         gameloop playerid gamestate
+
+let getUsers () =
+    firstPlayer
