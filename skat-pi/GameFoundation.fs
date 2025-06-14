@@ -115,3 +115,6 @@ let rec gameloop (player: PlayerId) (game: GameState) =
         let action = getActionFromConsole currentPlayer
         let playerid, gamestate = takeAction currentPlayer action game
         gameloop playerid gamestate
+
+let getUsers () =
+    firstPlayer
