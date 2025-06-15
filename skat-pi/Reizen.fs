@@ -2,8 +2,26 @@
 
 open GameFoundation
 
-let updatePlayerActivity player decision =
+let updatePlayerActivity (player : ReizAction) decision =
     { player with Activity = decision }
+
+let updatePlayerOneActivity decision =
+    match playerOne with
+    | p -> playerOne <- {playerOne with Activity = decision}
+
+let updatePlayerTwoActivity decision =
+    match playerTwo with
+    | p -> playerTwo <- {playerTwo with Activity = decision}
+
+let updatePlayerThreeActivity decision =
+    match playerThree with
+    | p -> playerThree <- {playerThree with Activity = decision}
+
+//let updatePlayerAmountM player amount =
+//    match player.Activity with
+//    | Bid -> { player with Amount = Some amount }
+//    | Reject -> player
+//    | Undecided -> player
 
 let updatePlayerAmount player amount =
     match player.Activity with
@@ -22,13 +40,35 @@ let rec setGameStyle (player: ReizAction) : GameStyle =
         printf "Player %i, wrong selection, try again." player.Player
         setGameStyle player
 
-let rec getPlayerAction (player: ReizAction) =
-    printf "Player %i, do you want to bid (Yes/No):" player.Player
+let rec getPlayerAction (player: PlayerId) =
+    printf "Player %i, do you want to bid (Yes/No):" player
     let console = System.Console.ReadLine()
-    match console with
-    | "Yes" -> updatePlayerActivity player Bid
-    | "No" -> updatePlayerActivity player Reject
-    | _ -> getPlayerAction player
+    match player with
+    | 1 -> match console with
+            | "Yes" -> updatePlayerOneActivity Bid
+            | "No" -> updatePlayerOneActivity Reject
+            | _ -> getPlayerAction player
+    | 2 -> match console with
+            | "Yes" -> updatePlayerTwoActivity Bid
+            | "No" -> updatePlayerTwoActivity Reject
+            | _ -> getPlayerAction player
+    | 3 -> match console with
+            | "Yes" -> updatePlayerThreeActivity Bid
+            | "No" -> updatePlayerThreeActivity Reject
+            | _ -> getPlayerAction player
+    | _ -> failwith "Wrong player ID."
+
+let rec biddingM (player: PlayerId) (bid: int) =
+    printf "Player %i bid:" player
+    match System.Int32.TryParse(System.Console.ReadLine()) with
+    | false, _ -> failwith "Input could not be parsed as integer."
+    | true, input when input > bid -> 
+        match player with
+        | 1 -> playerOne <- {playerOne with Amount = Some input}
+        | 2 -> playerTwo <- {playerTwo with Amount = Some input}
+        | 3 -> playerThree <- {playerThree with Amount = Some input}
+        | _ -> failwith "Wrong player ID."
+    | true, _ -> biddingM player bid
 
 let rec bidding (player: ReizAction) (bid: int) =
     printf "Player %i bid:" player.Player
@@ -49,12 +89,12 @@ let rec getBiddingPlayer (playerOne: ReizAction) (playerTwo: ReizAction) (startB
             getBiddingPlayer firstPlayerUpdated secondPlayerUpdated i
 
 let startBidding () =
-    let firstPlayer = getPlayerAction firstPlayer
-    let secondPlayer = getPlayerAction secondPlayer
+    getPlayerAction 1
+    getPlayerAction 2
     if firstPlayer.Activity = Bid && secondPlayer.Activity = Bid then
         getBiddingPlayer firstPlayer secondPlayer 18
     else
-        let thirdPlayer = getPlayerAction thirdPlayer
+        getPlayerAction 3
         if firstPlayer.Activity = Bid && thirdPlayer.Activity = Bid then
             getBiddingPlayer firstPlayer thirdPlayer 18
         elif secondPlayer.Activity = Bid && thirdPlayer.Activity = Bid then

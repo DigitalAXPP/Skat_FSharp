@@ -17,6 +17,10 @@ type Rank =
 type Card = { Suite: Suite; Rank: Rank }
 
 type PlayerId = int
+type SkatPosition =
+    | Geben
+    | Hoeren
+    | Sagen
 type GameState = {
     TurnQueue: PlayerId list
     TurnCount: int
@@ -41,6 +45,12 @@ type ReizAction = {
     Activity: Action
     Amount: int option
 }
+type PlayerState = {
+    Player: PlayerId
+    Activity: Action
+    Amount: int option
+    Position: SkatPosition
+}
 type Reizen = {
     FirstPlayer: ReizAction
     SecondPlayer: ReizAction
@@ -50,6 +60,24 @@ let firstPlayer = {
     Player = 1
     Activity = Undecided
     Amount = None
+}
+let mutable playerOne = {
+    Player = 1
+    Activity = Undecided
+    Amount = None
+    Position = Geben
+}
+let mutable playerTwo = {
+    Player = 2
+    Activity = Undecided
+    Amount = None
+    Position = Geben
+}
+let mutable playerThree = {
+    Player = 3
+    Activity = Undecided
+    Amount = None
+    Position = Geben
 }
 let secondPlayer = {
     Player = 2
