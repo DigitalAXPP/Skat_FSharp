@@ -58,47 +58,56 @@ let rec getPlayerAction (player: PlayerId) =
             | _ -> getPlayerAction player
     | _ -> failwith "Wrong player ID."
 
-let rec biddingM (player: PlayerId) (bid: int) =
+let rec biddingM (player: PlayerId) (bid: int) : unit * bool * int =
     printf "Player %i bid:" player
     match System.Int32.TryParse(System.Console.ReadLine()) with
-    | false, _ -> failwith "Input could not be parsed as integer."
+    | false, _ -> (), false, bid
     | true, input when input > bid -> 
         match player with
-        | 1 -> playerOne <- {playerOne with Amount = Some input}
-        | 2 -> playerTwo <- {playerTwo with Amount = Some input}
-        | 3 -> playerThree <- {playerThree with Amount = Some input}
+        | 1 -> (playerOne <- {playerOne with Amount = Some input}), true, input
+        | 2 -> (playerTwo <- {playerTwo with Amount = Some input}), true, input
+        | 3 -> (playerThree <- {playerThree with Amount = Some input}), true, input
         | _ -> failwith "Wrong player ID."
     | true, _ -> biddingM player bid
 
-let rec bidding (player: ReizAction) (bid: int) =
-    printf "Player %i bid:" player.Player
-    match System.Int32.TryParse(System.Console.ReadLine()) with
-    | false, _ -> None
-    | true, input when input > bid -> Some input
-    | true, _ -> bidding player bid
+let rec getBiddingPlayerM (firstPlayer: PlayerId) (secondPlayer: PlayerId) (startBid: int) =
+    match biddingM firstPlayer startBid with
+    | _, false, _ -> ()
+    | _, true, v -> 
+        match biddingM secondPlayer v with
+        | _, false, _ -> ()
+        | _, true, i -> 
+            getBiddingPlayerM firstPlayer secondPlayer i
 
-let rec getBiddingPlayer (playerOne: ReizAction) (playerTwo: ReizAction) (startBid: int) =
-    match bidding playerOne startBid with
-    | None -> playerTwo
-    | Some v -> 
-        let firstPlayerUpdated = { playerOne with Amount = Some v }
-        match bidding playerTwo v with
-        | None -> firstPlayerUpdated
-        | Some i -> 
-            let secondPlayerUpdated = { playerTwo with Amount = Some i }
-            getBiddingPlayer firstPlayerUpdated secondPlayerUpdated i
+//let rec bidding (player: ReizAction) (bid: int) =
+//    printf "Player %i bid:" player.Player
+//    match System.Int32.TryParse(System.Console.ReadLine()) with
+//    | false, _ -> None
+//    | true, input when input > bid -> Some input
+//    | true, _ -> bidding player bid
+
+//let rec getBiddingPlayer (playerOne: ReizAction) (playerTwo: ReizAction) (startBid: int) =
+//    match bidding playerOne startBid with
+//    | None -> playerTwo
+//    | Some v -> 
+//        let firstPlayerUpdated = { playerOne with Amount = Some v }
+//        match bidding playerTwo v with
+//        | None -> firstPlayerUpdated
+//        | Some i -> 
+//            let secondPlayerUpdated = { playerTwo with Amount = Some i }
+//            getBiddingPlayer firstPlayerUpdated secondPlayerUpdated i
 
 let startBidding () =
     getPlayerAction 1
     getPlayerAction 2
-    if firstPlayer.Activity = Bid && secondPlayer.Activity = Bid then
-        getBiddingPlayer firstPlayer secondPlayer 18
+    if playerOne.Activity = Bid && playerTwo.Activity = Bid then
+        getBiddingPlayerM playerOne.Player playerTwo.Player 18
     else
         getPlayerAction 3
-        if firstPlayer.Activity = Bid && thirdPlayer.Activity = Bid then
-            getBiddingPlayer firstPlayer thirdPlayer 18
-        elif secondPlayer.Activity = Bid && thirdPlayer.Activity = Bid then
-            getBiddingPlayer secondPlayer thirdPlayer 18
+        if playerOne.Activity = Bid && playerThree.Activity = Bid then
+            getBiddingPlayerM playerOne.Player playerThree.Player 18
+        elif playerTwo.Activity = Bid && playerThree.Activity = Bid then
+            getBiddingPlayerM playerTwo.Player playerThree.Player 18
         else
             failwith "There is no bidder."
 
