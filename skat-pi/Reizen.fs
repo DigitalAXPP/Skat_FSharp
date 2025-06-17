@@ -29,15 +29,15 @@ let updatePlayerAmount player amount =
     | Reject -> player
     | Undecided -> player
 
-let rec setGameStyle (player: ReizAction) : GameStyle =
-    printf "Player %i, which game style do you want to play (Colour/Grand/Null)?" player.Player
+let rec setGameStyle (player: PlayerId) : GameStyle =
+    printf "Player %i, which game style do you want to play (Colour/Grand/Null)?" player
     let console = System.Console.ReadLine()
     match console with
     | "Colour" -> ColourGame
     | "Grand" -> Grand
     | "Null" -> NullGame
     | _ -> 
-        printf "Player %i, wrong selection, try again." player.Player
+        printf "Player %i, wrong selection, try again." player
         setGameStyle player
 
 let rec getPlayerAction (player: PlayerId) =
@@ -72,10 +72,10 @@ let rec biddingM (player: PlayerId) (bid: int) : unit * bool * int =
 
 let rec getBiddingPlayerM (firstPlayer: PlayerId) (secondPlayer: PlayerId) (startBid: int) =
     match biddingM firstPlayer startBid with
-    | _, false, _ -> ()
+    | _, false, _ -> firstPlayer
     | _, true, v -> 
         match biddingM secondPlayer v with
-        | _, false, _ -> ()
+        | _, false, _ -> firstPlayer
         | _, true, i -> 
             getBiddingPlayerM firstPlayer secondPlayer i
 
