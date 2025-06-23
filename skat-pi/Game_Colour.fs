@@ -81,3 +81,25 @@ let cardStrength (game: GameType) (card: Card) : int =
         50 + List.findIndex ((=) card.Rank) normalRankOrder
     | _ ->
         List.findIndex ((=) card.Rank) normalRankOrder
+
+let playRound cards game =
+    printf "Player 1, select the card you want to play:"
+    let consoleOne = System.Console.ReadLine()
+    printf "Player 2, select the card you want to play:"
+    let consoleTwo = System.Console.ReadLine()
+    printf "Player 3, select the card you want to play:"
+    let consoleThree = System.Console.ReadLine()
+    let one = match System.Int32.TryParse(consoleOne) with
+                | false, _ -> failwith "no integer"
+                | true, input -> cards.FirstPlayer[input]
+    let two = match System.Int32.TryParse(consoleTwo) with
+                | false, _ -> failwith "no integer"
+                | true, input -> cards.SecondPlayer[input]
+    let three = match System.Int32.TryParse(consoleThree) with
+                | false, _ -> failwith "no integer"
+                | true, input -> cards.ThirdPlayer[input]
+    let first = cardStrength game one
+    let second = cardStrength game two
+    let third = cardStrength game three
+    let final = List.max [first; second; third]
+    printf "%i" final
