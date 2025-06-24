@@ -71,6 +71,18 @@ let isTrumpSuite (card: Card) (trump: Suite) =
 
 let normalRankOrder = [Seven; Eight; Nine; Dame; King; Ten; Ace]
 
+let removeCardFirst (cards: GameSetup) (card: Card) =
+    let newhand = List.filter ((<>) card) cards.FirstPlayer
+    {cards with FirstPlayer = newhand }
+
+let removeCardSecond (cards: GameSetup) (card: Card) =
+    let newhand = List.filter ((<>) card) cards.SecondPlayer
+    {cards with SecondPlayer = newhand }
+
+let removeCardThird (cards: GameSetup) (card: Card) =
+    let newhand = List.filter ((<>) card) cards.ThirdPlayer
+    {cards with ThirdPlayer = newhand }
+
 let cardStrength (game: GameType) (card: Card) : int =
     let jackSuitOrder = [Clubs; Spades; Hearts; Diamonds]
 
@@ -99,7 +111,11 @@ let playRound cards game =
                 | false, _ -> failwith "no integer"
                 | true, input -> cards.ThirdPlayer[input]
     let first = cardStrength game one
+    let cards_first = removeCardFirst cards one
     let second = cardStrength game two
+    let cards_second = removeCardSecond cards_first two
     let third = cardStrength game three
+    let cards_third = removeCardThird cards_second three
     let final = List.max [first; second; third]
     printf "%i" final
+    printf "%A" cards_third

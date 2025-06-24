@@ -90,59 +90,59 @@ let thirdPlayer = {
     Amount = None
 }
 
-let gamestate = true
-let initialState = { TurnQueue = [1; 2; 3]; TurnCount = 0 }
+//let gamestate = true
+//let initialState = { TurnQueue = [1; 2; 3]; TurnCount = 0 }
 
-let pickCard deck =
-    deck |> List.head
+//let pickCard deck =
+//    deck |> List.head
 
-let shuffleDeck (deck: Card list) =
-    let rnd = System.Random()
-    deck |> List.sortBy (fun _ -> rnd.Next())
+//let shuffleDeck (deck: Card list) =
+//    let rnd = System.Random()
+//    deck |> List.sortBy (fun _ -> rnd.Next())
 
-let dealInitialHand deck =
-    let shuffled = shuffleDeck deck
-    let (firstPlayerHand, rest) = List.splitAt 10 shuffled
-    let (secondPlayerHand, newDeck) = List.splitAt 10 rest
-    let (thirdPlayerHand, skat) = List.splitAt 10 newDeck
-    { FirstPlayer = firstPlayerHand; SecondPlayer = secondPlayerHand; ThirdPlayer = thirdPlayerHand; Skat = skat }
+//let dealInitialHand deck =
+//    let shuffled = shuffleDeck deck
+//    let (firstPlayerHand, rest) = List.splitAt 10 shuffled
+//    let (secondPlayerHand, newDeck) = List.splitAt 10 rest
+//    let (thirdPlayerHand, skat) = List.splitAt 10 newDeck
+//    { FirstPlayer = firstPlayerHand; SecondPlayer = secondPlayerHand; ThirdPlayer = thirdPlayerHand; Skat = skat }
 
-let nextTurn (state: GameState) : PlayerId * GameState =
-    match state.TurnQueue with
-    | [] -> failwith "Empty Queue"
-    | current :: rest -> 
-        let newQueue = rest @ [current]
-        current, { state with TurnQueue = newQueue; TurnCount = state.TurnCount + 1 }
+//let nextTurn (state: GameState) : PlayerId * GameState =
+//    match state.TurnQueue with
+//    | [] -> failwith "Empty Queue"
+//    | current :: rest -> 
+//        let newQueue = rest @ [current]
+//        current, { state with TurnQueue = newQueue; TurnCount = state.TurnCount + 1 }
 
-let takeAction (player: PlayerId) (action: Action) (game: GameState) : PlayerId * GameState =
-    match action with
-    | Bid -> 
-        printf "Player %i bids." player
+//let takeAction (player: PlayerId) (action: Action) (game: GameState) : PlayerId * GameState =
+//    match action with
+//    | Bid -> 
+//        printf "Player %i bids." player
 
-        nextTurn game
-    | Reject ->
-        printf "Player %i rejects." player
-        nextTurn game
+//        nextTurn game
+//    | Reject ->
+//        printf "Player %i rejects." player
+//        nextTurn game
 
-let getActionFromConsole (playerId: PlayerId) : Action =
-    printfn "Player %d, enter your action (Bid, Reject):" playerId
-    match System.Console.ReadLine().Trim().ToLower().Split() with
-    | [| "bid" |] -> Bid
-    | [| "reject" |] -> Reject
-    | _ ->
-        printfn "Invalid input, defaulting to wait."
-        Reject
+//let getActionFromConsole (playerId: PlayerId) : Action =
+//    printfn "Player %d, enter your action (Bid, Reject):" playerId
+//    match System.Console.ReadLine().Trim().ToLower().Split() with
+//    | [| "bid" |] -> Bid
+//    | [| "reject" |] -> Reject
+//    | _ ->
+//        printfn "Invalid input, defaulting to wait."
+//        Reject
 
-let rec gameloop (player: PlayerId) (game: GameState) =
-    //printf "%i %A %i" bidder.Player bidder.Activity bidder.Amount.Value
-    match game.TurnQueue with
-    | [] ->
-        printfn "All players have quit. Game over."
-    | currentPlayer :: rest ->
-        printfn "Turn %d: Player %d's turn" game.TurnCount currentPlayer
-        let action = getActionFromConsole currentPlayer
-        let playerid, gamestate = takeAction currentPlayer action game
-        gameloop playerid gamestate
+//let rec gameloop (player: PlayerId) (game: GameState) =
+//    //printf "%i %A %i" bidder.Player bidder.Activity bidder.Amount.Value
+//    match game.TurnQueue with
+//    | [] ->
+//        printfn "All players have quit. Game over."
+//    | currentPlayer :: rest ->
+//        printfn "Turn %d: Player %d's turn" game.TurnCount currentPlayer
+//        let action = getActionFromConsole currentPlayer
+//        let playerid, gamestate = takeAction currentPlayer action game
+//        gameloop playerid gamestate
 
-let getUsers () =
-    firstPlayer
+//let getUsers () =
+//    firstPlayer
