@@ -24,7 +24,10 @@ type GameSetup =
         ThirdPlayer: Card list
         Skat: Card list
     }
-
+type GameState = 
+    | Uninitialized
+    | Running
+    | Finished
 type GameType =
     | SuitGame of Suite  // One suit is trump
     | Grand              // Only Jacks are trump
@@ -94,7 +97,7 @@ let cardStrength (game: GameType) (card: Card) : int =
     | _ ->
         List.findIndex ((=) card.Rank) normalRankOrder
 
-let playRound cards game =
+let rec playRound cards game =
     printf "Player 1, select the card you want to play:"
     let consoleOne = System.Console.ReadLine()
     printf "Player 2, select the card you want to play:"
@@ -119,3 +122,6 @@ let playRound cards game =
     let final = List.max [first; second; third]
     printf "%i" final
     printf "%A" cards_third
+    match cards_third.FirstPlayer with
+    | [] -> Finished
+    | _ -> playRound cards_third game
