@@ -50,6 +50,7 @@ type PlayerState = {
     Activity: Action
     Amount: int option
     Position: SkatPosition
+    Hands: Card list
 }
 type Reizen = {
     FirstPlayer: ReizAction
@@ -66,18 +67,21 @@ let mutable playerOne = {
     Activity = Undecided
     Amount = None
     Position = Geben
+    Hands = []
 }
 let mutable playerTwo = {
     Player = 2
     Activity = Undecided
     Amount = None
     Position = Geben
+    Hands = []
 }
 let mutable playerThree = {
     Player = 3
     Activity = Undecided
     Amount = None
     Position = Geben
+    Hands = []
 }
 let secondPlayer = {
     Player = 2
