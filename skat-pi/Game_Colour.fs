@@ -86,6 +86,15 @@ let removeCardThird (cards: GameSetup) (card: Card) =
     let newhand = List.filter ((<>) card) cards.ThirdPlayer
     {cards with ThirdPlayer = newhand }
 
+let addHandtoPlayerOne hand =
+    playerOne <- { playerOne with Hands = playerOne.Hands @ hand }
+
+let addHandtoPlayerTwo hand =
+    playerTwo <- { playerTwo with Hands = playerTwo.Hands @ hand }
+
+let addHandtoPlayerThree hand =
+    playerThree <- { playerThree with Hands = playerThree.Hands @ hand }
+
 let cardStrength (game: GameType) (card: Card) : int =
     let jackSuitOrder = [Clubs; Spades; Hearts; Diamonds]
 
