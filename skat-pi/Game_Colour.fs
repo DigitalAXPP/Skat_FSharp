@@ -16,7 +16,7 @@ type Rank =
     | Ten
     | Ace
     | Jack
-type Card = { Suite: Suite; Rank: Rank }
+//type Card = { Suite: Suite; Rank: Rank }
 type GameSetup =
     {
         FirstPlayer: Card list
@@ -32,7 +32,7 @@ type GameType =
     | SuitGame of Suite  // One suit is trump
     | Grand              // Only Jacks are trump
     | Null               // No trumps at all
-
+type PlayerHand = { PlayerID: PlayerId; HandScore: int; Hand: Card}
 
 let allRanks = [Seven ; Eight ; Nine ; Dame ; King ; Ten ; Ace ; Jack]
 let allSuites = [Spades ; Clubs ; Hearts ; Diamonds]
@@ -106,6 +106,14 @@ let cardStrength (game: GameType) (card: Card) : int =
     | _ ->
         List.findIndex ((=) card.Rank) normalRankOrder
 
+let winHand (hands: PlayerHand list) =
+    let handList = [hands.[0].Hand; hands.[1].Hand; hands.[2].Hand]
+    let winningHand = hands |> List.maxBy (fun p -> p.HandScore)
+    match winningHand.PlayerID with
+    | 1 -> addHandtoPlayerOne handList
+    | 2 -> addHandtoPlayerTwo handList
+    | 3 -> addHandtoPlayerThree handList
+
 let rec playRound cards game =
     printf "Player 1, select the card you want to play:"
     let consoleOne = System.Console.ReadLine()
@@ -128,8 +136,14 @@ let rec playRound cards game =
     let cards_second = removeCardSecond cards_first two
     let third = cardStrength game three
     let cards_third = removeCardThird cards_second three
-    let final = List.max [first; second; third]
-    printf "%i" final
+    let handList = [
+        {PlayerID = 1; HandScore = first; Hand = one}
+        {PlayerID = 2; HandScore = second; Hand = two}
+        {PlayerID = 3; HandScore = third; Hand = three}]
+    let final = winHand handList
+    //let highest = handList |> List.maxBy (fun p -> p.HandScore)
+    //let final = List.max [first; second; third]
+    //printf "%i" final
     printf "%A" cards_third
     match cards_third.FirstPlayer with
     | [] -> Finished
