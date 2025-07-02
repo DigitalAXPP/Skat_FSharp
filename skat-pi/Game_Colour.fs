@@ -2,20 +2,20 @@
 
 open GameFoundation
 
-type Suite = 
-    | Diamonds
-    | Hearts
-    | Clubs
-    | Spades
-type Rank =
-    | Seven
-    | Eight
-    | Nine
-    | Dame
-    | King
-    | Ten
-    | Ace
-    | Jack
+//type Suite = 
+//    | Diamonds
+//    | Hearts
+//    | Clubs
+//    | Spades
+//type Rank =
+//    | Seven
+//    | Eight
+//    | Nine
+//    | Dame
+//    | King
+//    | Ten
+//    | Ace
+//    | Jack
 //type Card = { Suite: Suite; Rank: Rank }
 type GameSetup =
     {
@@ -140,7 +140,7 @@ let rec playRound cards game =
         {PlayerID = 1; HandScore = first; Hand = one}
         {PlayerID = 2; HandScore = second; Hand = two}
         {PlayerID = 3; HandScore = third; Hand = three}]
-    let final = winHand handList
+    winHand handList
     //let highest = handList |> List.maxBy (fun p -> p.HandScore)
     //let final = List.max [first; second; third]
     //printf "%i" final
