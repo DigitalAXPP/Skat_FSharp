@@ -126,7 +126,9 @@ let handValueGrand (hand: Card) =
     | Jack -> 2
 
 let calculateAugen (player: PlayerState) =
-    player |> List.iter (fun h -> handValueGrand h)
+    player.Hands
+    |> List.map (fun h -> handValueGrand h)
+    |> List.sum
 
 let rec playRound cards game =
     printf "Player 1, select the card you want to play:"
