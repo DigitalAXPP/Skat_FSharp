@@ -114,6 +114,20 @@ let winHand (hands: PlayerHand list) =
     | 2 -> addHandtoPlayerTwo handList
     | 3 -> addHandtoPlayerThree handList
 
+let handValueGrand (hand: Card) =
+    match hand.Rank with
+    | Seven -> 0
+    | Eight -> 0
+    | Nine -> 0
+    | Dame -> 3
+    | King -> 4
+    | Ten -> 10
+    | Ace -> 11
+    | Jack -> 2
+
+let calculateAugen (player: PlayerState) =
+    player |> List.iter (fun h -> handValueGrand h)
+
 let rec playRound cards game =
     printf "Player 1, select the card you want to play:"
     let consoleOne = System.Console.ReadLine()
