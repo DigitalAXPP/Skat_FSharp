@@ -2,21 +2,6 @@
 
 open GameFoundation
 
-//type Suite = 
-//    | Diamonds
-//    | Hearts
-//    | Clubs
-//    | Spades
-//type Rank =
-//    | Seven
-//    | Eight
-//    | Nine
-//    | Dame
-//    | King
-//    | Ten
-//    | Ace
-//    | Jack
-//type Card = { Suite: Suite; Rank: Rank }
 type GameSetup =
     {
         FirstPlayer: Card list
@@ -157,9 +142,6 @@ let rec playRound cards game =
         {PlayerID = 2; HandScore = second; Hand = two}
         {PlayerID = 3; HandScore = third; Hand = three}]
     winHand handList
-    //let highest = handList |> List.maxBy (fun p -> p.HandScore)
-    //let final = List.max [first; second; third]
-    //printf "%i" final
     printf "Player 1 has %i Augen." (calculateAugen playerOne)
     printf "Player 2 has %i Augen." (calculateAugen playerTwo)
     printf "Player 3 has %i Augen." (calculateAugen playerThree)

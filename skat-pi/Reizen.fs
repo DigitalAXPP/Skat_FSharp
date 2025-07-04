@@ -17,12 +17,6 @@ let updatePlayerThreeActivity decision =
     match playerThree with
     | p -> playerThree <- {playerThree with Activity = decision}
 
-//let updatePlayerAmountM player amount =
-//    match player.Activity with
-//    | Bid -> { player with Amount = Some amount }
-//    | Reject -> player
-//    | Undecided -> player
-
 let updatePlayerAmount player amount =
     match player.Activity with
     | Bid -> { player with Amount = Some amount }
@@ -78,24 +72,6 @@ let rec getBiddingPlayerM (firstPlayer: PlayerId) (secondPlayer: PlayerId) (star
         | _, false, _ -> firstPlayer
         | _, true, i -> 
             getBiddingPlayerM firstPlayer secondPlayer i
-
-//let rec bidding (player: ReizAction) (bid: int) =
-//    printf "Player %i bid:" player.Player
-//    match System.Int32.TryParse(System.Console.ReadLine()) with
-//    | false, _ -> None
-//    | true, input when input > bid -> Some input
-//    | true, _ -> bidding player bid
-
-//let rec getBiddingPlayer (playerOne: ReizAction) (playerTwo: ReizAction) (startBid: int) =
-//    match bidding playerOne startBid with
-//    | None -> playerTwo
-//    | Some v -> 
-//        let firstPlayerUpdated = { playerOne with Amount = Some v }
-//        match bidding playerTwo v with
-//        | None -> firstPlayerUpdated
-//        | Some i -> 
-//            let secondPlayerUpdated = { playerTwo with Amount = Some i }
-//            getBiddingPlayer firstPlayerUpdated secondPlayerUpdated i
 
 let startBidding () =
     getPlayerAction 1
