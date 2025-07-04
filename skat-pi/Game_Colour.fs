@@ -160,6 +160,9 @@ let rec playRound cards game =
     //let highest = handList |> List.maxBy (fun p -> p.HandScore)
     //let final = List.max [first; second; third]
     //printf "%i" final
+    printf "Player 1 has %i Augen." (calculateAugen playerOne)
+    printf "Player 2 has %i Augen." (calculateAugen playerTwo)
+    printf "Player 3 has %i Augen." (calculateAugen playerThree)
     printf "%A" cards_third
     match cards_third.FirstPlayer with
     | [] -> Finished

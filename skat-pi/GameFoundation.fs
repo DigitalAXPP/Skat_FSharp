@@ -57,11 +57,11 @@ type Reizen = {
     SecondPlayer: ReizAction
     ThirdPlayer: ReizAction
 }
-let firstPlayer = {
-    Player = 1
-    Activity = Undecided
-    Amount = None
-}
+//let firstPlayer = {
+//    Player = 1
+//    Activity = Undecided
+//    Amount = None
+//}
 let mutable playerOne = {
     Player = 1
     Activity = Undecided
@@ -83,16 +83,16 @@ let mutable playerThree = {
     Position = Geben
     Hands = []
 }
-let secondPlayer = {
-    Player = 2
-    Activity = Undecided
-    Amount = None
-}
-let thirdPlayer = {
-    Player = 3
-    Activity = Undecided
-    Amount = None
-}
+//let secondPlayer = {
+//    Player = 2
+//    Activity = Undecided
+//    Amount = None
+//}
+//let thirdPlayer = {
+//    Player = 3
+//    Activity = Undecided
+//    Amount = None
+//}
 
 //let gamestate = true
 //let initialState = { TurnQueue = [1; 2; 3]; TurnCount = 0 }
