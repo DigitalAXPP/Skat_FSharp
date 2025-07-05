@@ -1,4 +1,4 @@
-module Tests
+module Reizen
 
 open System
 open System.IO
@@ -7,11 +7,7 @@ open Reizen
 open GameFoundation
 
 [<Fact>]
-let ``My test`` () =
-    Assert.True(true)
-
-[<Fact>]
-let ``UpdatePlayerOneAmountTests`` () =
+let ``UpdatePlayerOneAmountTrueTests`` () =
     //-- Arrange
     let input = new StringReader "10"
     Console.SetIn input
@@ -36,6 +32,36 @@ let ``UpdatePlayerActivityTests`` () =
     Assert.Equal (firstPlayer.Activity, Reject)
 
 [<Fact>]
+let ``UpdatePlayerOneActivityTests`` () =
+    //-- Arrange
+    
+    //-- Act
+    updatePlayerOneActivity Reject
+    
+    //-- Assert
+    Assert.Equal (Reject, playerOne.Activity)
+
+[<Fact>]
+let ``UpdatePlayerTwoActivityTests`` () =
+    //-- Arrange
+    
+    //-- Act
+    updatePlayerTwoActivity Bid
+    
+    //-- Assert
+    Assert.Equal (Bid, playerTwo.Activity)
+
+[<Fact>]
+let ``UpdatePlayerThreeActivityTests`` () =
+    //-- Arrange
+    
+    //-- Act
+    updatePlayerThreeActivity Bid
+    
+    //-- Assert
+    Assert.Equal (Bid, playerThree.Activity)
+
+[<Fact>]
 let ``GetPlayerAction_Yes_Tests`` () =
     //-- Arrange
     let input = new StringReader "Yes"
@@ -58,3 +84,15 @@ let ``GetPlayerAction_No_Tests`` () =
 
     //-- Assert
     Assert.Equal (Reject, playerOne.Activity)
+
+[<Fact>]
+let ``SetGameStyleColour`` () =
+    //-- Arrange
+    let input = new StringReader "Colour"
+    Console.SetIn input
+
+    //-- Act
+    let result = setGameStyle 1
+
+    //-- Assert
+    Assert.Equal (ColourGame, result)
