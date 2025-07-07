@@ -20,3 +20,28 @@ let ``CardStrengthTests`` () =
     Assert.Equal (103, resultJack)
     Assert.Equal (56, resultTumpSuite)
     Assert.Equal (1, resultnullHand)
+
+[<Fact>]
+let ``handValueGrandTests`` () =
+    //-- Arrange
+    let hand = {Suite = Diamonds; Rank = Eight}
+
+    //-- Act
+    let result = handValueGrand hand
+
+    //-- Assert
+    Assert.Equal (0, result)
+
+[<Fact>]
+let ``calculateAugenTests`` () =
+    //-- Arrange
+    addHandtoPlayerOne ([
+        {Suite = Diamonds; Rank = Eight};
+        {Suite = Hearts; Rank = Ace};
+        {Suite = Clubs; Rank = Ten}])
+
+    //-- Act
+    let result = calculateAugen playerOne
+
+    //-- Assert
+    Assert.Equal (21, result)
