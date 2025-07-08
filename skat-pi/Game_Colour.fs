@@ -13,10 +13,6 @@ type GameState =
     | Uninitialized
     | Running
     | Finished
-type GameType =
-    | SuitGame of Suite  // One suit is trump
-    | Grand              // Only Jacks are trump
-    | Null               // No trumps at all
 type PlayerHand = { PlayerID: PlayerId; HandScore: int; Hand: Card}
 
 let allRanks = [Seven ; Eight ; Nine ; Dame ; King ; Ten ; Ace ; Jack]

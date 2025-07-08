@@ -29,6 +29,10 @@ type GameStyle =
     | ColourGame
     | Grand
     | NullGame
+type GameType =
+    | SuitGame of Suite  // One suit is trump
+    | Grand              // Only Jacks are trump
+    | NullGame               // No trumps at all
 type GameSetup =
     {
         FirstPlayer: Card list

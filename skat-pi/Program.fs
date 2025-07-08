@@ -8,7 +8,8 @@ open Reizen
 let main args =
     let startingHands = dealInitialHand Deck
     let reizResult = startReizAction ()
-    printf "%A" startingHands
+    let result = playRound startingHands (SuitGame Diamonds)
     printf "%A" reizResult
     printf "%i %A" playerOne.Player playerOne.Activity
+    printf "%A" result
     0

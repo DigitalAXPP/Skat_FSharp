@@ -23,11 +23,18 @@ let updatePlayerAmount player amount =
     | Reject -> player
     | Undecided -> player
 
-let rec setGameStyle (player: PlayerId) : GameStyle =
-    printf "Player %i, which game style do you want to play (Colour/Grand/Null)?" player
+let rec setGameStyle (player: PlayerId) : GameType =
+    printf "Player %i, which game style do you want to play (SuitGame/Grand/Null)?" player
     let console = System.Console.ReadLine()
     match console with
-    | "Colour" -> ColourGame
+    | "SuitGame" -> 
+        printf "Player %i, which suit do you want to play (Diamonds/Hearts/Clubs/Spades)?" player
+        let console = System.Console.ReadLine()
+        match console with
+        | "Diamonds" -> SuitGame Diamonds
+        | "Hearts" -> SuitGame Hearts
+        | "Clubs" -> SuitGame Clubs
+        | "Spades" -> SuitGame Spades
     | "Grand" -> Grand
     | "Null" -> NullGame
     | _ -> 
