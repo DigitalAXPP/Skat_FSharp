@@ -88,11 +88,11 @@ let ``GetPlayerAction_No_Tests`` () =
 [<Fact>]
 let ``SetGameStyleColour`` () =
     //-- Arrange
-    let input = new StringReader "Colour"
+    let input = new StringReader "Grand"
     Console.SetIn input
 
     //-- Act
     let result = setGameStyle 1
 
     //-- Assert
-    Assert.Equal (ColourGame, result)
+    Assert.Equal (Grand, result)
