@@ -6,6 +6,7 @@ open Microsoft.Maui
 open Microsoft.Maui.Graphics
 open Microsoft.Maui.Accessibility
 open Microsoft.Maui.Primitives
+open GameFoundation
 
 open type Fabulous.Maui.View
 
@@ -46,6 +47,11 @@ module App =
 
                         Label("Welcome to .NET Multi-platform App UI powered by Fabulous")
                             .semantics(SemanticHeadingLevel.Level2, "Welcome to dot net Multi platform App U I powered by Fabulous")
+                            .font(size = 18.)
+                            .centerTextHorizontal()
+
+                        Label($"This is a test label.{playerOne.Activity}")
+                            .semantics(SemanticHeadingLevel.Level2, $"test: {playerOne.Activity}")
                             .font(size = 18.)
                             .centerTextHorizontal()
 

@@ -95,9 +95,13 @@
   <ItemGroup>
     <PackageReference Include="Fabulous" Version="2.4.0" />
     <PackageReference Include="Fabulous.MauiControls" Version="8.0.5" />
-    <PackageReference Include="FSharp.Core" Version="8.0.100" />
+    <!--<PackageReference Include="FSharp.Core" Version="8.0.100" />-->
     <PackageReference Include="Microsoft.Maui.Controls" Version="8.0.3" />
     <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="8.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\skat-pi\skat-pi.fsproj" />
   </ItemGroup>
 
 </Project>
