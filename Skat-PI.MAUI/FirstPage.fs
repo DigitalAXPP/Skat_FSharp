@@ -9,7 +9,8 @@ open type Fabulous.Maui.View
 
 //open GameFoundation
 
-
+type Intent =
+    | SecondStep
 
 //    type Model = { Count: int }
 type Model = { Name: string }
@@ -34,7 +35,7 @@ let init () = { Name = "Alex"}
 //        | Clicked -> { model with Count = model.Count + 1 }, [ SemanticAnnounce $"Clicked {model.Count} times" ]
 let update msg model =
         match msg with
-        | Clicked -> { model with Name = "Verca"}
+        | Clicked -> { model with Name = "Verca"}, Cmd.none
 
 //    let view model =
 //        Application(
@@ -87,6 +88,8 @@ let view model =
                         .centerTextHorizontal()
 
                     Button("Click", Clicked)
+
+                    Button("Go 2nd page", Clicked)
                 })
             )
         //)

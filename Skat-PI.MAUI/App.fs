@@ -11,10 +11,15 @@ open GameFoundation
 open type Fabulous.Maui.View
 
 module App =
+    
+    type Step =
+        | PageFirst
+        | PageSecond
 
     //type Model = { Count: int }
     //type Model = { Name: string }
     type Model = {
+        Step: Step
         FirstpageModel: firstpage.Model
         SecondpageModel: SecondPage.Model option
     }
@@ -24,6 +29,7 @@ module App =
     type Msg =
         | FirstPageMsg of firstpage.Msg
         | SecondPageMsg of SecondPage.Msg
+        | NextStep of Step
 
     //type CmdMsg = SemanticAnnounce of string
 
@@ -37,9 +43,9 @@ module App =
     //let init () = { Count = 0 }, []
     //let init () = { Name = "Alex"}
     let init () = {
+        Step = PageFirst
         FirstpageModel = firstpage.init ()
-        SecondpageModel = None
-    }
+        SecondpageModel = None }, Cmd.none
 
     //let update msg model =
     //    match msg with
@@ -49,7 +55,25 @@ module App =
     //    | Clicked -> { model with Name = "Verca"}
     let update msg model =
         match msg with
-        | FirstPageMsg f1 -> { model with FirstpageModel = firstpage.update f1 model.FirstpageModel }
+        //| FirstPageMsg f1 -> { model with FirstpageModel = firstpage.update f1 model.FirstpageModel }
+        //| SecondPageMsg f2 -> { model with SecondpageModel = SecondPage.update f2 model.SecondpageModel}
+        | NextStep step ->
+            let newStep =
+                match step with
+                | PageFirst -> { model with FirstpageModel = firstpage.init () }
+                | PageSecond -> { model with SecondpageModel = Some (SecondPage.init ()) }
+
+            { newStep with Step = step }, Cmd.none
+        | FirstPageMsg f1 ->
+            let updatedModel, cmd = firstpage.update f1 model.FirstpageModel
+            { model with FirstpageModel = updatedModel }, Cmd.map FirstPageMsg cmd
+        | SecondPageMsg f2 -> 
+            match model.SecondpageModel with
+            | Some m ->
+                let updatedModel, cmd = SecondPage.update f2 m
+                { model with SecondpageModel = Some updatedModel }, Cmd.map SecondPageMsg cmd
+            | None -> model, Cmd.none
+
 
     //let view model =
     //    Application(
@@ -108,8 +132,13 @@ module App =
         Application (
             NavigationPage () {
                 View.map FirstPageMsg (firstpage.view model.FirstpageModel)
+                if model.Step = PageSecond then
+                    match model.SecondpageModel with
+                    | None -> View.map FirstPageMsg (firstpage.view model.FirstpageModel)
+                    | Some v -> View.map SecondPageMsg (SecondPage.view v)
             }
         )
     
     //let program = Program.statefulWithCmdMsg init update view mapCmd
-    let program = Program.stateful init update view
+    //let program = Program.stateful init update view
+    let program = Program.statefulWithCmd init update view

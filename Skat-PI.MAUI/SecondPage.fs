@@ -6,26 +6,37 @@ open Microsoft.Maui.Accessibility
 open Microsoft.Maui
 open type Fabulous.Maui.View
 
-type Model = { Name: string }
+type Model = { 
+        Password: string
+        ConfirmPassword: string
+    }
 
-type Msg = | Clicked
+type Msg =
+        | PasswordChanged of string
+        | ConfirmPasswordChanged of string
 
-let init () = { Name = "Alex"}
+let init () = {
+        Password = ""
+        ConfirmPassword = ""
+    }
 
 let update msg model =
         match msg with
-        | Clicked -> { model with Name = "Verca"}
+        | PasswordChanged pwd -> { model with Password = pwd}, Cmd.none
+        | ConfirmPasswordChanged pwd -> { model with ConfirmPassword = pwd}, Cmd.none
 
 let view model =
-        Application(
+        //Application(
             ContentPage(
                 (VStack (spacing =25.) {
-                    Label($"Hello, {model.Name}")
+                    Label($"Hello, xxx")
                         .semantics(SemanticHeadingLevel.Level1)
                         .font(size = 32.)
                         .centerTextHorizontal()
 
-                    Button("Click", Clicked)
+                    //Button("Click", Clicked)
+                    Entry(model.Password, PasswordChanged)
+                    Entry(model.ConfirmPassword, ConfirmPasswordChanged)
                 })
             )
-        )
+        //)
