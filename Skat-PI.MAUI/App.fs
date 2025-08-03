@@ -65,13 +65,22 @@ module App =
 
             { newStep with Step = step }, Cmd.none
         | FirstPageMsg f1 ->
-            let updatedModel, cmd = firstpage.update f1 model.FirstpageModel
-            { model with FirstpageModel = updatedModel }, Cmd.map FirstPageMsg cmd
+            let updatedModel, cmd, intent = firstpage.update f1 model.FirstpageModel
+            match intent with
+            | firstpage.Intent.DoNothing -> { model with FirstpageModel = updatedModel }, Cmd.map FirstPageMsg cmd
+            | firstpage.Intent.SecondStep -> 
+                let newModel = { model with FirstpageModel = updatedModel }
+                newModel, Cmd.batch [
+                    Cmd.map FirstPageMsg cmd
+                    Cmd.ofMsg (NextStep PageSecond)
+                ]
         | SecondPageMsg f2 -> 
             match model.SecondpageModel with
             | Some m ->
-                let updatedModel, cmd = SecondPage.update f2 m
-                { model with SecondpageModel = Some updatedModel }, Cmd.map SecondPageMsg cmd
+                let updatedModel, cmd, intent = SecondPage.update f2 m
+                match intent with
+                | SecondPage.Intent.DoNothing -> { model with SecondpageModel = Some updatedModel }, Cmd.map SecondPageMsg cmd
+                | SecondPage.Intent.BackFirstPage -> { model with SecondpageModel = Some updatedModel }, Cmd.map SecondPageMsg cmd
             | None -> model, Cmd.none
 
 

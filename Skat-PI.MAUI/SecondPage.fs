@@ -6,6 +6,10 @@ open Microsoft.Maui.Accessibility
 open Microsoft.Maui
 open type Fabulous.Maui.View
 
+type Intent =
+    | DoNothing
+    | BackFirstPage
+
 type Model = { 
         Password: string
         ConfirmPassword: string
@@ -14,6 +18,7 @@ type Model = {
 type Msg =
         | PasswordChanged of string
         | ConfirmPasswordChanged of string
+        | ReturnFirstPage
 
 let init () = {
         Password = ""
@@ -22,8 +27,9 @@ let init () = {
 
 let update msg model =
         match msg with
-        | PasswordChanged pwd -> { model with Password = pwd}, Cmd.none
-        | ConfirmPasswordChanged pwd -> { model with ConfirmPassword = pwd}, Cmd.none
+        | PasswordChanged pwd -> { model with Password = pwd}, Cmd.none, DoNothing
+        | ConfirmPasswordChanged pwd -> { model with ConfirmPassword = pwd}, Cmd.none, DoNothing
+        | ReturnFirstPage -> model, Cmd.none, BackFirstPage
 
 let view model =
         //Application(
@@ -34,7 +40,8 @@ let view model =
                         .font(size = 32.)
                         .centerTextHorizontal()
 
-                    //Button("Click", Clicked)
+                    Button("Click", ReturnFirstPage)
+
                     Entry(model.Password, PasswordChanged)
                     Entry(model.ConfirmPassword, ConfirmPasswordChanged)
                 })

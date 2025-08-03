@@ -10,13 +10,16 @@ open type Fabulous.Maui.View
 //open GameFoundation
 
 type Intent =
+    | DoNothing
     | SecondStep
 
 //    type Model = { Count: int }
 type Model = { Name: string }
 
 //    type Msg = | Clicked
-type Msg = | Clicked
+type Msg = 
+    | Clicked
+    | NextPage
 
 //    type CmdMsg = SemanticAnnounce of string
 
@@ -35,7 +38,8 @@ let init () = { Name = "Alex"}
 //        | Clicked -> { model with Count = model.Count + 1 }, [ SemanticAnnounce $"Clicked {model.Count} times" ]
 let update msg model =
         match msg with
-        | Clicked -> { model with Name = "Verca"}, Cmd.none
+        | Clicked -> { model with Name = "Verca"}, Cmd.none, DoNothing
+        | NextPage -> { model with Name = "xx" }, Cmd.none, SecondStep
 
 //    let view model =
 //        Application(
@@ -89,7 +93,7 @@ let view model =
 
                     Button("Click", Clicked)
 
-                    Button("Go 2nd page", Clicked)
+                    Button("Go 2nd page", NextPage)
                 })
             )
         //)
