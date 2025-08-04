@@ -30,6 +30,7 @@ module App =
         | FirstPageMsg of firstpage.Msg
         | SecondPageMsg of SecondPage.Msg
         | NextStep of Step
+        | BackStep of Step
 
     //type CmdMsg = SemanticAnnounce of string
 
@@ -64,6 +65,13 @@ module App =
                 | PageSecond -> { model with SecondpageModel = Some (SecondPage.init ()) }
 
             { newStep with Step = step }, Cmd.none
+        | BackStep step ->
+            let oldStep =
+                match step with
+                | PageFirst -> { model with SecondpageModel = None}
+                | PageSecond -> { model with SecondpageModel = Some (SecondPage.init ())}
+
+            { oldStep with Step = step }, Cmd.none
         | FirstPageMsg f1 ->
             let updatedModel, cmd, intent = firstpage.update f1 model.FirstpageModel
             match intent with
@@ -80,7 +88,12 @@ module App =
                 let updatedModel, cmd, intent = SecondPage.update f2 m
                 match intent with
                 | SecondPage.Intent.DoNothing -> { model with SecondpageModel = Some updatedModel }, Cmd.map SecondPageMsg cmd
-                | SecondPage.Intent.BackFirstPage -> { model with SecondpageModel = Some updatedModel }, Cmd.map SecondPageMsg cmd
+                | SecondPage.Intent.BackFirstPage -> 
+                    let newModel = { model with SecondpageModel = Some updatedModel }
+                    newModel, Cmd.batch [
+                        Cmd.map SecondPageMsg cmd
+                        Cmd.ofMsg (BackStep PageFirst)
+                    ]
             | None -> model, Cmd.none
 
 
