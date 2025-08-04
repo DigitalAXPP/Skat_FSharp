@@ -32,7 +32,6 @@ let update msg model =
         | ReturnFirstPage -> model, Cmd.none, BackFirstPage
 
 let view model =
-        //Application(
             ContentPage(
                 (VStack (spacing =25.) {
                     Label($"Hello, xxx")
@@ -46,4 +45,3 @@ let view model =
                     Entry(model.ConfirmPassword, ConfirmPasswordChanged)
                 })
             )
-        //)

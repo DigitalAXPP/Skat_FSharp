@@ -16,48 +16,25 @@ module App =
         | PageFirst
         | PageSecond
 
-    //type Model = { Count: int }
-    //type Model = { Name: string }
     type Model = {
         Step: Step
         FirstpageModel: firstpage.Model
         SecondpageModel: SecondPage.Model option
     }
 
-    //type Msg = | Clicked
-    //type Msg = | Clicked
     type Msg =
         | FirstPageMsg of firstpage.Msg
         | SecondPageMsg of SecondPage.Msg
         | NextStep of Step
         | BackStep of Step
 
-    //type CmdMsg = SemanticAnnounce of string
-
-    //let semanticAnnounce text =
-    //    Cmd.ofSub(fun _ -> SemanticScreenReader.Announce(text))
-
-    //let mapCmd cmdMsg =
-    //    match cmdMsg with
-    //    | SemanticAnnounce text -> semanticAnnounce text
-
-    //let init () = { Count = 0 }, []
-    //let init () = { Name = "Alex"}
     let init () = {
         Step = PageFirst
         FirstpageModel = firstpage.init ()
         SecondpageModel = None }, Cmd.none
 
-    //let update msg model =
-    //    match msg with
-    //    | Clicked -> { model with Count = model.Count + 1 }, [ SemanticAnnounce $"Clicked {model.Count} times" ]
-    //let update msg model =
-    //    match msg with
-    //    | Clicked -> { model with Name = "Verca"}
     let update msg model =
         match msg with
-        //| FirstPageMsg f1 -> { model with FirstpageModel = firstpage.update f1 model.FirstpageModel }
-        //| SecondPageMsg f2 -> { model with SecondpageModel = SecondPage.update f2 model.SecondpageModel}
         | NextStep step ->
             let newStep =
                 match step with
@@ -96,60 +73,6 @@ module App =
                     ]
             | None -> model, Cmd.none
 
-
-    //let view model =
-    //    Application(
-    //        ContentPage(
-    //            ScrollView(
-    //                (VStack(spacing = 25.) {
-    //                    Image("dotnet_bot.png")
-    //                        .semantics(description = "Cute dotnet bot waving hi to you!")
-    //                        .height(200.)
-    //                        .centerHorizontal()
-
-    //                    Label("Hello, World!")
-    //                        .semantics(SemanticHeadingLevel.Level1)
-    //                        .font(size = 32.)
-    //                        .centerTextHorizontal()
-
-    //                    Label("Welcome to .NET Multi-platform App UI powered by Fabulous")
-    //                        .semantics(SemanticHeadingLevel.Level2, "Welcome to dot net Multi platform App U I powered by Fabulous")
-    //                        .font(size = 18.)
-    //                        .centerTextHorizontal()
-
-    //                    Label($"This is a test label.{playerOne.Activity}")
-    //                        .semantics(SemanticHeadingLevel.Level2, $"test: {playerOne.Activity}")
-    //                        .font(size = 18.)
-    //                        .centerTextHorizontal()
-
-    //                    let text =
-    //                        if model.Count = 0 then
-    //                            "Click me"
-    //                        else
-    //                            $"Clicked {model.Count} times"
-
-    //                    Button(text, Clicked)
-    //                        .semantics(hint = "Counts the number of times you click")
-    //                        .centerHorizontal()
-    //                })
-    //                    .padding(30., 0., 30., 0.)
-    //                    .centerVertical()
-    //            )
-    //        )
-    //    )
-    //let view model =
-    //    Application(
-    //        ContentPage(
-    //            (VStack (spacing =25.) {
-    //                Label($"Hello, {model.Name}")
-    //                    .semantics(SemanticHeadingLevel.Level1)
-    //                    .font(size = 32.)
-    //                    .centerTextHorizontal()
-
-    //                Button("Click", Clicked)
-    //            })
-    //        )
-    //    )
     let view model =
         Application (
             NavigationPage () {
@@ -160,7 +83,4 @@ module App =
                     | Some v -> View.map SecondPageMsg (SecondPage.view v)
             }
         )
-    
-    //let program = Program.statefulWithCmdMsg init update view mapCmd
-    //let program = Program.stateful init update view
     let program = Program.statefulWithCmd init update view
