@@ -6,6 +6,9 @@ open Microsoft.Maui.Accessibility
 open Microsoft.Maui
 open type Fabulous.Maui.View
 
+open GameFoundation
+
+
 type Intent =
     | DoNothing
     | BackFirstPage
@@ -33,15 +36,28 @@ let update msg model =
 
 let view model =
             ContentPage(
-                (VStack (spacing =25.) {
-                    Label($"Hello, xxx")
-                        .semantics(SemanticHeadingLevel.Level1)
-                        .font(size = 32.)
-                        .centerTextHorizontal()
+                ScrollView(
+                    (VStack (spacing =25.) {
+                        Label($"Hello, xxx")
+                            .semantics(SemanticHeadingLevel.Level1)
+                            .font(size = 32.)
+                            .centerTextHorizontal()
 
-                    Button("Click", ReturnFirstPage)
+                        Label($"Hello, {playerOne.Player}. You are at position {playerOne.Position}.")
+                            .semantics(SemanticHeadingLevel.Level1)
+                            .font(size = 32.)
+                            .centerTextHorizontal()
 
-                    Entry(model.Password, PasswordChanged)
-                    Entry(model.ConfirmPassword, ConfirmPasswordChanged)
-                })
+                        Button("Click", ReturnFirstPage)
+
+                        let items = [ 1..100 ]
+                        ListView(items)
+                            (fun item -> TextCell($"{item}"))
+
+                    
+
+                        Entry(model.Password, PasswordChanged)
+                        Entry(model.ConfirmPassword, ConfirmPasswordChanged)
+                    }).margin(Thickness(10., 0.))
+                ).verticalScrollBarVisibility(ScrollBarVisibility.Always)
             )
