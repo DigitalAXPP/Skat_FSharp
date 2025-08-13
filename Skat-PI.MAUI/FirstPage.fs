@@ -32,6 +32,10 @@ let view model =
                         .font(size = 32.)
                         .centerTextHorizontal()
 
+                    Image("hearts_ace.png")
+                        .height(200.)
+                        .centerHorizontal()
+
                     Button("Click", Clicked)
 
                     Button("Go 2nd page", NextPage)

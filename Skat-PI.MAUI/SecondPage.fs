@@ -54,8 +54,6 @@ let view model =
                         ListView(items)
                             (fun item -> TextCell($"{item}"))
 
-                    
-
                         Entry(model.Password, PasswordChanged)
                         Entry(model.ConfirmPassword, ConfirmPasswordChanged)
                     }).margin(Thickness(10., 0.))
