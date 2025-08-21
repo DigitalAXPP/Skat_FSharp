@@ -8,10 +8,10 @@ open type Fabulous.Maui.View
 
 open GameFoundation
 
-
 type Intent =
     | DoNothing
     | BackFirstPage
+    | ForwardThirdpage
 
 type Model = { 
         Password: string
@@ -22,6 +22,7 @@ type Msg =
         | PasswordChanged of string
         | ConfirmPasswordChanged of string
         | ReturnFirstPage
+        | GoThirdPage
 
 let init () = {
         Password = ""
@@ -33,6 +34,7 @@ let update msg model =
         | PasswordChanged pwd -> { model with Password = pwd}, Cmd.none, DoNothing
         | ConfirmPasswordChanged pwd -> { model with ConfirmPassword = pwd}, Cmd.none, DoNothing
         | ReturnFirstPage -> model, Cmd.none, BackFirstPage
+        | GoThirdPage -> model, Cmd.none, ForwardThirdpage
 
 let view model =
             ContentPage(
@@ -48,11 +50,17 @@ let view model =
                             .font(size = 32.)
                             .centerTextHorizontal()
 
-                        Button("Click", ReturnFirstPage)
+                        Button("1st page", ReturnFirstPage)
 
-                        let items = [ 1..100 ]
-                        ListView(items)
-                            (fun item -> TextCell($"{item}"))
+                        Button("3rd page", GoThirdPage)
+
+                        let cards = [ {Suite = Hearts; Rank = Eight}; {Suite = Clubs; Rank = Dame} ]
+                        ListView(cards)
+                            (fun card -> 
+                                ViewCell(
+                                    Image((cardToImageName card))
+                                        .height(64.)
+                                ))                            
 
                         Entry(model.Password, PasswordChanged)
                         Entry(model.ConfirmPassword, ConfirmPasswordChanged)

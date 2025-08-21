@@ -15,23 +15,27 @@ module App =
     type Step =
         | PageFirst
         | PageSecond
+        | PageThird
 
     type Model = {
         Step: Step
         FirstpageModel: firstpage.Model
         SecondpageModel: SecondPage.Model option
+        ThirdpageModel: ThirdPage.Model
     }
 
     type Msg =
         | FirstPageMsg of firstpage.Msg
         | SecondPageMsg of SecondPage.Msg
+        | ThirdPageMsg of ThirdPage.Msg
         | NextStep of Step
         | BackStep of Step
 
     let init () = {
         Step = PageFirst
         FirstpageModel = firstpage.init ()
-        SecondpageModel = None }, Cmd.none
+        SecondpageModel = None
+        ThirdpageModel = ThirdPage.init ()}, Cmd.none
 
     let update msg model =
         match msg with
@@ -40,6 +44,7 @@ module App =
                 match step with
                 | PageFirst -> { model with FirstpageModel = firstpage.init () }
                 | PageSecond -> { model with SecondpageModel = Some (SecondPage.init ()) }
+                | PageThird -> { model with ThirdpageModel = ThirdPage.init ()}
 
             { newStep with Step = step }, Cmd.none
         | BackStep step ->
@@ -71,16 +76,36 @@ module App =
                         Cmd.map SecondPageMsg cmd
                         Cmd.ofMsg (BackStep PageFirst)
                     ]
+                | SecondPage.Intent.ForwardThirdpage ->
+                    let newModel = { model with SecondpageModel = Some updatedModel }
+                    newModel, Cmd.batch [
+                        Cmd.map SecondPageMsg cmd
+                        Cmd.ofMsg (NextStep PageThird)
+                    ]
             | None -> model, Cmd.none
+        | ThirdPageMsg f3 ->
+            let updatedModel, cmd, intent = ThirdPage.update f3 model.ThirdpageModel
+            match intent with
+            | ThirdPage.Intent.DoNothing -> { model with ThirdpageModel = updatedModel }, Cmd.map ThirdPageMsg cmd
+            | ThirdPage.Intent.BackFirstPage -> 
+                let newModel = { model with ThirdpageModel = updatedModel }
+                newModel, Cmd.batch [
+                    Cmd.map ThirdPageMsg cmd
+                    Cmd.ofMsg (BackStep PageFirst)
+                ]
 
     let view model =
         Application (
             NavigationPage () {
-                View.map FirstPageMsg (firstpage.view model.FirstpageModel)
-                if model.Step = PageSecond then
-                    match model.SecondpageModel with
-                    | None -> View.map FirstPageMsg (firstpage.view model.FirstpageModel)
-                    | Some v -> View.map SecondPageMsg (SecondPage.view v)
+                //View.map FirstPageMsg (firstpage.view model.FirstpageModel)
+                match model.Step with
+                | PageFirst -> View.map FirstPageMsg (firstpage.view model.FirstpageModel)
+                | PageSecond -> View.map SecondPageMsg (SecondPage.view model.SecondpageModel.Value)
+                | PageThird -> View.map ThirdPageMsg (ThirdPage.view model.ThirdpageModel)
+                //if model.Step = PageSecond then
+                    //match model.SecondpageModel with
+                    //| None -> View.map FirstPageMsg (firstpage.view model.FirstpageModel)
+                    //| Some v -> View.map SecondPageMsg (SecondPage.view v)
             }
         )
     let program = Program.statefulWithCmd init update view
