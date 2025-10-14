@@ -117,3 +117,46 @@ let mutable playerThree = {
     Position = Geben
     Hands = []
 }
+
+type PlayerConfig = {
+    Player: PlayerId
+    Activity: Action
+    Amount: int option
+    Position: SkatPosition
+    StartingHand: Card list
+    HandsWon: (PlayerId * Card) list option
+}
+
+let playerOneFixed = {
+    Player = 1
+    Activity = Undecided
+    Amount = None
+    Position = Geben
+    StartingHand = []
+    HandsWon = None
+}
+
+let playerTwoFixed = {
+    Player = 2
+    Activity = Undecided
+    Amount = None
+    Position = Geben
+    StartingHand = []
+    HandsWon = None
+}
+
+let playerThreeFixed = {
+    Player = 3
+    Activity = Undecided
+    Amount = None
+    Position = Geben
+    StartingHand = []
+    HandsWon = None
+}
+
+let nextSkatPlayer p =
+    match p.Player with
+    | 1 -> playerTwo
+    | 2 -> playerThree
+    | 3 -> playerOne
+    | _ -> failwith "not allowed ID."

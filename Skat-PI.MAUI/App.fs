@@ -16,18 +16,21 @@ module App =
         | PageFirst
         | PageSecond
         | PageThird
+        | PageFour of GameType
 
     type Model = {
         Step: Step
         FirstpageModel: firstpage.Model
         SecondpageModel: SecondPage.Model option
         ThirdpageModel: ThirdPage.Model
+        FourthpageModel: FourPage.Model
     }
 
     type Msg =
         | FirstPageMsg of firstpage.Msg
         | SecondPageMsg of SecondPage.Msg
         | ThirdPageMsg of ThirdPage.Msg
+        | FourthPageMsg of FourPage.Msg
         | NextStep of Step
         | BackStep of Step
 
@@ -35,18 +38,32 @@ module App =
         Step = PageFirst
         FirstpageModel = firstpage.init ()
         SecondpageModel = None
-        ThirdpageModel = ThirdPage.init ()}, Cmd.none
+        ThirdpageModel = ThirdPage.init ()
+        FourthpageModel = FourPage.init (NullGame)}, Cmd.none
 
     let update msg model =
         match msg with
         | NextStep step ->
-            let newStep =
+            //let newStep =
                 match step with
-                | PageFirst -> { model with FirstpageModel = firstpage.init () }
-                | PageSecond -> { model with SecondpageModel = Some (SecondPage.init ()) }
-                | PageThird -> { model with ThirdpageModel = ThirdPage.init ()}
+                | PageFirst -> 
+                    { model with 
+                        Step = PageFirst
+                        FirstpageModel = firstpage.init () }, Cmd.none
+                | PageSecond -> 
+                    { model with 
+                        Step = PageSecond
+                        SecondpageModel = Some (SecondPage.init ()) }, Cmd.none
+                | PageThird -> 
+                    { model with 
+                        Step = PageThird
+                        ThirdpageModel = ThirdPage.init ()}, Cmd.none
+                | PageFour value ->
+                    { model with 
+                        Step = PageFour value
+                        FourthpageModel = FourPage.init value}, Cmd.none
 
-            { newStep with Step = step }, Cmd.none
+            //{ newStep with Step = step }
         | BackStep step ->
             let oldStep =
                 match step with
@@ -93,6 +110,16 @@ module App =
                     Cmd.map ThirdPageMsg cmd
                     Cmd.ofMsg (BackStep PageFirst)
                 ]
+            | ThirdPage.Intent.ForwardFourthPage s ->
+                let newModel = { model with ThirdpageModel = updatedModel }
+                newModel, Cmd.batch [
+                    Cmd.map ThirdPageMsg cmd
+                    Cmd.ofMsg (NextStep (PageFour s))
+                ]
+        | FourthPageMsg f4 ->
+            let updatedModel, cmd, intent = FourPage.update f4 model.FourthpageModel
+            match intent with
+            | FourPage.Intent.DoNothing -> { model with FourthpageModel = updatedModel }, Cmd.map FourthPageMsg cmd
 
     let view model =
         Application (
@@ -102,6 +129,7 @@ module App =
                 | PageFirst -> View.map FirstPageMsg (firstpage.view model.FirstpageModel)
                 | PageSecond -> View.map SecondPageMsg (SecondPage.view model.SecondpageModel.Value)
                 | PageThird -> View.map ThirdPageMsg (ThirdPage.view model.ThirdpageModel)
+                | PageFour _ -> View.map FourthPageMsg (FourPage.view model.FourthpageModel)
                 //if model.Step = PageSecond then
                     //match model.SecondpageModel with
                     //| None -> View.map FirstPageMsg (firstpage.view model.FirstpageModel)

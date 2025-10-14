@@ -37,6 +37,7 @@
     <Compile Include="FirstPage.fs" />
     <Compile Include="SecondPage.fs" />
     <Compile Include="ThirdPage.fs" />
+    <Compile Include="FourPage.fs" />
     <Compile Include="App.fs" />
     <Compile Include="MauiProgram.fs" />
   </ItemGroup>
