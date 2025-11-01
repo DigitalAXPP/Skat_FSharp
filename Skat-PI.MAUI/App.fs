@@ -51,9 +51,11 @@ module App =
                         Step = PageFirst
                         FirstpageModel = firstpage.init () }, Cmd.none
                 | PageSecond -> 
-                    { model with 
+                    let secondModel, secondCmd = SecondPage.init()
+                    { model with
                         Step = PageSecond
-                        SecondpageModel = Some (SecondPage.init ()) }, Cmd.none
+                        SecondpageModel = Some secondModel },
+                    Cmd.map SecondPageMsg secondCmd
                 | PageThird -> 
                     { model with 
                         Step = PageThird
@@ -65,12 +67,21 @@ module App =
 
             //{ newStep with Step = step }
         | BackStep step ->
-            let oldStep =
+            //let oldStep =
                 match step with
-                | PageFirst -> { model with SecondpageModel = None}
-                | PageSecond -> { model with SecondpageModel = Some (SecondPage.init ())}
+                | PageFirst -> 
+                    { model with 
+                        Step = PageFirst
+                        SecondpageModel = None}, Cmd.none
+                | PageSecond -> 
+                    let secondModel, secondCmd = SecondPage.init()
+                    { model with
+                        Step = PageSecond
+                        SecondpageModel = Some secondModel },
+                    Cmd.map SecondPageMsg secondCmd
+                    //{ model with SecondpageModel = Some (SecondPage.init ())}
 
-            { oldStep with Step = step }, Cmd.none
+            //{ oldStep with Step = step }, Cmd.none
         | FirstPageMsg f1 ->
             let updatedModel, cmd, intent = firstpage.update f1 model.FirstpageModel
             match intent with
