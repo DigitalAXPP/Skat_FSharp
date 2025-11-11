@@ -20,11 +20,12 @@ let connect (hubUrl : string) (dispatch : ServerMsg -> unit) =
                 .WithAutomaticReconnect()
                 .Build()
 
-        hub.On<string>("JoinGame", fun name -> 
-            dispatch (JoinGame name)) |> ignore
-
         hub.On<string>("ReceiveMove", fun move ->
-            dispatch (ReceiveMove move)) |> ignore
+            //dispatch (ReceiveMove move)) |> ignore
+            printf "Move: %s" move) |> ignore
+
+        hub.On<string seq>("PlayersUpdate", fun players ->
+            printf "Players updated: %A" (players |> Seq.toList)) |> ignore
 
         do! hub.StartAsync()
         printf "Connected to %s" hubUrl

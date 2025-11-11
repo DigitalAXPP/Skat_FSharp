@@ -15,28 +15,28 @@ type Intent =
     | ForwardThirdpage
 
 type Model = { 
-        Password: string
-        ConfirmPassword: string
+        Name: string
+        Move: string
         Hub: GameHub.Model
     }
 
 type Msg =
         | PasswordChanged of string
-        | ConfirmPasswordChanged of string
+        | MoveSet of string
         | ReturnFirstPage
         | GoThirdPage
         | HubMsg of GameHub.Msg
 
 let init () =
      let hubModel, hubCmd = GameHub.init()
-     { Password = ""
-       ConfirmPassword = ""
+     { Name = ""
+       Move = ""
        Hub = hubModel}, Cmd.map HubMsg hubCmd
 
 let update msg model =
         match msg with
-        | PasswordChanged pwd -> { model with Password = pwd}, Cmd.none, DoNothing
-        | ConfirmPasswordChanged pwd -> { model with ConfirmPassword = pwd}, Cmd.none, DoNothing
+        | PasswordChanged pwd -> { model with Name = pwd}, Cmd.none, DoNothing
+        | MoveSet move -> { model with Move = move}, Cmd.none, DoNothing
         | ReturnFirstPage -> model, Cmd.none, BackFirstPage
         | GoThirdPage -> model, Cmd.none, ForwardThirdpage
         //| HubMsg ConnectHub ->
@@ -70,7 +70,10 @@ let view model =
                         Button("3rd page", GoThirdPage)
 
                         Button("Connect", HubMsg ConnectHub)
-                        Button("Join Game", HubMsg (EnterGame "Alex"))
+                        Button("Disconnect", HubMsg DisconnectHub)
+                        Button("Join Game", HubMsg (EnterGame model.Name))
+                        Button("Leave Game", HubMsg (LeaveGame model.Name))
+                        Button("Receive Move", HubMsg (ReceiveMove model.Move))
 
                         let cards = [ {Suite = Hearts; Rank = Eight}; {Suite = Clubs; Rank = Dame} ]
                         ListView(cards)
@@ -80,8 +83,8 @@ let view model =
                                         .height(64.)
                                 ))                            
 
-                        Entry(model.Password, PasswordChanged)
-                        Entry(model.ConfirmPassword, ConfirmPasswordChanged)
+                        Entry(model.Name, PasswordChanged)
+                        Entry(model.Move, MoveSet)
                     }).margin(Thickness(10., 0.))
                 ).verticalScrollBarVisibility(ScrollBarVisibility.Always)
             )

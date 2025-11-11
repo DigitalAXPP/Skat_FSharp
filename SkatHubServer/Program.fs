@@ -34,18 +34,21 @@ type GameHub() =
             do! this.Clients.Group(gameId).SendAsync("PlayersUpdate", players)
         }
 
-    member this.QuiteGame (gameId: string, playerName: string) =
+    member this.QuitGame (gameId: string, playerName: string) =
         task {
-            do! this.Groups.AddToGroupAsync (this.Context.ConnectionId, gameId)
+            do! this.Groups.RemoveFromGroupAsync (this.Context.ConnectionId, gameId)
             match GameStore.games.TryGetValue gameId with
             | true, players ->
                 players.Remove playerName |> ignore
-                do! this.Clients.Group(gameId).SendAsync("PlayersUpdate", playerName)
+                do! this.Clients.Group(gameId).SendAsync("PlayersUpdate", players)
             | _ -> ()
         }
 
-    member this.SendMove (move: string) =
-        this.Clients.All.SendAsync("ReceiveMove", move)
+    member this.SendMove (gameId: string, move: string) =
+        task {
+            do! this.Clients.All.SendAsync("ReceiveMove", move)
+            do! this.Clients.Group(gameId).SendAsync("PlayersUpdate", move)
+        }
 
 let builder = WebApplication.CreateBuilder()
 builder.Services.AddSignalR() |> ignore

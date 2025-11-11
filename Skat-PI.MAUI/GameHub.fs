@@ -15,10 +15,11 @@ type Msg =
     | TestHub
     | ConnectHub
     | ConnectedHub of HubConnection
-    | DisconnectedHub
+    | DisconnectHub
     | EnterGame of string
     | GameJoined
-    | LeaveGame
+    | GameQuit
+    | LeaveGame of string
     | ReceiveMove of string
     | SendMove of string
     | ConnectionHubFailed of string
@@ -31,6 +32,7 @@ let init() = {
 let update msg model =
     match msg, model.Connection with
     | GameJoined, _ -> {model with Status = "Game Joined"}, Cmd.none
+    | GameQuit, _ -> {model with Status = "Game quit"}, Cmd.none
     | ConnectHub, _ ->
         let cmd = 
             Cmd.ofAsyncMsg (async {
@@ -42,6 +44,17 @@ let update msg model =
             })
                 
         { model with Status = "Connecting..." }, cmd
+
+    | DisconnectHub, _ ->
+        match model.Connection with
+        | HubConnected hub -> 
+            let cmd = 
+                Cmd.ofAsyncMsg (async {
+                        disconnect hub |> Async.AwaitTask |> ignore
+                        return HubDisconnected 
+                })
+                
+            { model with Status = "Disconnected"; Connection = HubDisconnected }, Cmd.none
 
     | ConnectedHub hub, _ ->
         { model with
@@ -62,12 +75,33 @@ let update msg model =
                 })
             model, cmd
 
-    | LeaveGame, _ ->
-        model, Cmd.none
+    | LeaveGame name, _ ->
+        match model.Connection with
+        | HubConnected hub ->
+            let cmd =
+                Cmd.ofAsyncMsg (async {
+                    try
+                        do! hub.InvokeAsync("QuitGame", "game1", name) |> Async.AwaitTask
+                        return GameQuit
+                    with exn ->
+                        return ConnectionHubFailed exn.Message
+
+                })
+            model, cmd
 
     | ReceiveMove move, _ ->
-        { model with Moves = move :: model.Moves },
-        Cmd.none
+        match model.Connection with
+        | HubConnected hub ->
+            let cmd =
+                Cmd.ofAsyncMsg (async {
+                    try
+                        do! hub.InvokeAsync("SendMove", move) |> Async.AwaitTask
+                        return GameJoined
+                    with exn ->
+                        return ConnectionHubFailed exn.Message
+
+                })
+            { model with Moves = move :: model.Moves }, cmd
 
     | SendMove move, HubConnected hub ->
         let cmd =
